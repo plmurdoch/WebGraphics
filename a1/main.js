@@ -451,7 +451,7 @@ function render(timestamp) {
 		}
 		gPop();
 	gPop();
-	//fish tail
+	//fish tail (cones aswell)
 	//fish eyes
 	gPush();
 		gTranslate(0,0,0);
