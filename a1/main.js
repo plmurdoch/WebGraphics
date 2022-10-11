@@ -50,16 +50,18 @@ var controller;
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
 var sphereRotation = [0,0,0];
-var spherePosition = [-4,0,0];
+var spherePosition = [0,-3.25,0];
+var spherePosition2 =[-1, -3.75, 0];
+var sphereScale = [0.25, 0.25, 0.25];
 
-var cubeRotation = [0,0,0];
-var cubePosition = [-1,0,0];
+var cubeRotation = [1,1,0];
+var cubePosition = [-1,4,0];
 
 var cylinderRotation = [0,0,0];
 var cylinderPosition = [1.1,0,0];
 
-var coneRotation = [0,0,0];
-var conePosition = [3,0,0];
+var coneRotation = [0,1,0];
+var conePosition = [3,4,0];
 
 // Setting the colour which is needed during illumination of a surface
 function setColor(c)
@@ -258,19 +260,143 @@ function render(timestamp) {
 		prevTime = timestamp;
 	}
 	
-	// Sphere example
+	//Ground Box
+	gPush();
+		gTranslate(0,-5,0);
+		gScale(6,1,1);
+		gPush();
+		{
+			setColor(vec4(0.0, 0.0, 0.0, 1.0))
+			drawCube();
+			
+		}
+		gPop();
+	gPop();
+	
+	
+	// First Rock/sphere
 	gPush();
 		// Put the sphere where it should be!
 		gTranslate(spherePosition[0],spherePosition[1],spherePosition[2]);
+		gScale(0.75, 0.75, 0.75);
 		gPush();
 		{
 			// Draw the sphere!
-			setColor(vec4(1.0,0.0,0.0,1.0));
+			setColor(vec4(0.5,0.5,0.5,1.0));
 			drawSphere();
 		}
 		gPop();
 	gPop();
-    
+	// Second Rock/Sphere
+	gPush();
+		gTranslate(spherePosition2[0], spherePosition2[1], spherePosition2[2]);
+		gScale(sphereScale[0], sphereScale[1], sphereScale[2]);
+		gPush();
+		{
+			setColor(vec4(0.5, 0.5, 0.5, 1.0));
+			drawSphere();	
+		}
+		gPop();
+	gPop();
+	//Human model head
+	gPush();
+		gTranslate(4, 2, 1);
+		gScale(sphereScale[0], sphereScale[1], sphereScale[2]);
+		gPush();
+		{
+			setColor(vec4(0.8, 0, 0.8, 1.0));
+			drawSphere();
+		}
+		gPop();
+	gPop();
+	// Human model body
+	gPush();
+		gTranslate(4,0.75,0);
+		gScale(0.5, 1, 1);
+		gRotate(-15,0,1,0);
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	
+	//Human right leg joint 1
+	gPush();
+		gTranslate(3.75,-0.5,0);
+		gScale(0.1, 0.5, 0.1);
+		gRotate(-30,0,1,0);
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	//Human right leg joint 2
+	gPush();
+		gTranslate(3.75,-1.5,0);
+		gScale(0.1, 0.5, 0.1);
+		gRotate(-30,0,1,0);
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	//Human right foot
+	gPush();
+		gTranslate(3.75,-2,0);
+		gScale(0.15, 0.10, 0.20);
+		gRotate(-30,0,1,0);
+		
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	//Human left leg joint 1
+	gPush();
+		gTranslate(4.25,-0.5,0);
+		gScale(0.1, 0.5, 0.1);
+		gRotate(-30,0,1,0);
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	//Human left leg joint 2
+	gPush();
+		gTranslate(4.25,-1.5,0);
+		gScale(0.1, 0.5, 0.1);
+		gRotate(-30,0,1,0);
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	//Human left foot
+	gPush();
+		gTranslate(4.25,-2,0);
+		gScale(0.15, 0.10, 0.20);
+		gRotate(-30,0,1,0);
+		
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			drawCube();
+		}
+		gPop();
+	gPop();
+	
 	// Cube example
 	gPush();
 		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
@@ -300,7 +426,75 @@ function render(timestamp) {
 		}
 		gPop();
 	gPop();	
-    
+    //Fish front
+	gPush();
+		gTranslate(2,0,0);
+		gRotate(60, 0,1,0);
+		gScale(0.5,0.5,0.5);
+		gPush();
+		{
+			setColor(vec4(0.5,0.5,0.5,1));
+			drawCone();
+			
+		}
+		gPop();
+	gPop();
+	//fish back
+	gPush();
+		gTranslate(1.3,0,0);
+		gRotate(-100, 0,1,0);
+		gScale(0.5,0.5,1);
+		gPush();
+		{
+			setColor(vec4(0.5,0,0,1));
+			drawCone();
+		}
+		gPop();
+	gPop();
+	//fish tail
+	//fish eyes
+	gPush();
+		gTranslate(0,0,0);
+		gScale(0.1,0.1,0.1);
+		gPush();
+		{
+			setColor(vec4(1, 1, 1, 1.0));
+			drawSphere();	
+		}
+		gPop();
+	gPop();
+	gPush();
+		gTranslate(0,0,0.1);
+		gScale(0.05,0.05,0.05);
+		gPush();
+		{
+			setColor(vec4(0, 0, 0, 1.0));
+			drawSphere();	
+		}
+		gPop();
+	gPop();
+		gPush();
+		gTranslate(0.5,0,0);
+		gScale(0.1,0.1,0.1);
+		gPush();
+		{
+			setColor(vec4(1, 1, 1, 1.0));
+			drawSphere();	
+		}
+		gPop();
+	gPop();
+	gPush();
+		gTranslate(0.5,0,0.1);
+		gScale(0.05,0.05,0.05);
+		gPush();
+		{
+			setColor(vec4(0, 0, 0, 1.0));
+			drawSphere();	
+		}
+		gPop();
+	gPop();
+	//seaweed
+	//movement
 	// Cone example
 	gPush();
 		gTranslate(conePosition[0],conePosition[1],conePosition[2]);
