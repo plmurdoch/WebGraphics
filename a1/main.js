@@ -452,7 +452,7 @@ function render(timestamp) {
 		gPop();
 	gPop();
 	//fish tail (cones aswell)
-	//fish eyes
+	//fish eye right
 	gPush();
 		gTranslate(0,0,0);
 		gScale(0.1,0.1,0.1);
@@ -463,6 +463,7 @@ function render(timestamp) {
 		}
 		gPop();
 	gPop();
+	//fish pupil right
 	gPush();
 		gTranslate(0,0,0.1);
 		gScale(0.05,0.05,0.05);
@@ -472,6 +473,7 @@ function render(timestamp) {
 			drawSphere();	
 		}
 		gPop();
+	//fish eye left
 	gPop();
 		gPush();
 		gTranslate(0.5,0,0);
@@ -483,6 +485,7 @@ function render(timestamp) {
 		}
 		gPop();
 	gPop();
+	//fish pupil left
 	gPush();
 		gTranslate(0.5,0,0.1);
 		gScale(0.05,0.05,0.05);
