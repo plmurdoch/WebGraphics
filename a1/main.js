@@ -58,12 +58,14 @@ var cubeRotation = [1,1,0];
 var cubePosition = [-1,4,0];
 
 var cylinderRotation = [0,0,0];
-var cylinderPosition = [1.1,0,0];
+var cylinderPosition = [-4,4,0];
 
 var coneRotation = [0,1,0];
 var conePosition = [3,4,0];
-var Fish_head_pos = [2,0,0];
-var Fish_head_direction = 1;
+var Fish_head_pos = [-2,0,0];
+var Fish_tail_pos = [-3,0,0];
+
+var bubble_origin = [4, 2, 2];
 
 // Setting the colour which is needed during illumination of a surface
 function setColor(c)
@@ -400,34 +402,34 @@ function render(timestamp) {
 	gPop();
 	
 	// Cube example
-	gPush();
-		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
-		gPush();
-		{
-			setColor(vec4(0.0,1.0,0.0,1.0));
+	//gPush();
+		//gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
+		//gPush();
+		//{
+			//setColor(vec4(0.0,1.0,0.0,1.0));
 			// Here is an example of integration to rotate the cube around the y axis at 30 degrees per second
 			// new cube rotation around y = current cube rotation around y + 30deg/s*dt
-			cubeRotation[1] = cubeRotation[1] + 30*dt;
+		//	cubeRotation[1] = cubeRotation[1] + 30*dt;
 			// This calls a simple helper function to apply the rotation (theta, x, y, z), 
 			// where x,y,z define the axis of rotation. Here is is the y axis, (0,1,0).
-			gRotate(cubeRotation[1],0,1,0);
-			drawCube();
-		}
-		gPop();
-	gPop();
+			//gRotate(cubeRotation[1],0,1,0);
+			//drawCube();
+		//}
+		//gPop();
+	//gPop();
     
 	// Cylinder example
-	gPush();
-		gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
-		gPush();
-		{
-			setColor(vec4(0.0,0.0,1.0,1.0));
-			cylinderRotation[1] = cylinderRotation[1] + 60*dt;
-			gRotate(cylinderRotation[1],0,1,0);
-			drawCylinder();
-		}
-		gPop();
-	gPop();	
+	//gPush();
+		//gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
+		//gPush();
+		//{
+			//setColor(vec4(-4.0,0.0,4.0,1.0));
+			//cylinderRotation[1] = cylinderRotation[1] + 60*dt;
+			//gRotate(cylinderRotation[1],0,1,0);
+			//drawCylinder();
+		//}
+		//gPop();
+	//gPop();	
     //Fish front
 	gPush();
 		gTranslate(Fish_head_pos[0],Fish_head_pos[1], Fish_head_pos[2]);
@@ -436,19 +438,30 @@ function render(timestamp) {
 		gPush();
 		{
 			setColor(vec4(0.5,0.5,0.5,1));
-			if(animFlag){
-				Translate_Rotate(Fish_head_pos, 2, Fish_head_direction);
-			}
 			drawCone();
-			
 		}
 		gPop();
 	gPop();
 	//fish back
 	gPush();
-		gTranslate(1.3,0,0);
+		gTranslate(Fish_tail_pos[0],Fish_tail_pos[1], Fish_tail_pos[2]);
 		gRotate(-100, 0,1,0);
-		gScale(0.5,0.5,1);
+		gScale(0.5,0.5,1.5);
+		gPush();
+		{
+			setColor(vec4(0.5,0,0,1));
+			if(animFlag){
+			}
+			drawCone();
+		}
+		gPop();
+	gPop();
+	//fish tail (cones aswell)
+	gPush();
+		gTranslate(-4,0.1,-0.5);
+		gRotate(-100, 0,1,0);
+		gRotate(-25,1,0,0);
+		gScale(0.1,0.1,0.5);
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
@@ -456,10 +469,22 @@ function render(timestamp) {
 		}
 		gPop();
 	gPop();
-	//fish tail (cones aswell)
+	
+	gPush();
+		gTranslate(-4,-0.1,-0.5);
+		gRotate(-100, 0,1,0);
+		gRotate(25,1,0,0);
+		gScale(0.1,0.1,0.5);
+		gPush();
+		{
+			setColor(vec4(0.5,0,0,1));
+			drawCone();
+		}
+		gPop();
+	gPop();
 	//fish eye right
 	gPush();
-		gTranslate(0,0,0);
+		gTranslate(-1,0,0);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
@@ -470,7 +495,7 @@ function render(timestamp) {
 	gPop();
 	//fish pupil right
 	gPush();
-		gTranslate(0,0,0.1);
+		gTranslate(-1,0,0.1);
 		gScale(0.05,0.05,0.05);
 		gPush();
 		{
@@ -478,10 +503,10 @@ function render(timestamp) {
 			drawSphere();	
 		}
 		gPop();
-	//fish eye left
 	gPop();
-		gPush();
-		gTranslate(0.5,0,0);
+	//fish eye left
+	gPush();
+		gTranslate(-1.5,0,0);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
@@ -492,7 +517,7 @@ function render(timestamp) {
 	gPop();
 	//fish pupil left
 	gPush();
-		gTranslate(0.5,0,0.1);
+		gTranslate(-1.5,0,0.1);
 		gScale(0.05,0.05,0.05);
 		gPush();
 		{
@@ -502,36 +527,72 @@ function render(timestamp) {
 		gPop();
 	gPop();
 	//seaweed
-	//movement
-	// Cone example
-	gPush();
-		gTranslate(conePosition[0],conePosition[1],conePosition[2]);
-		gPush();
-		{
-			setColor(vec4(1.0,1.0,0.0,1.0));
-			coneRotation[1] = coneRotation[1] + 90*dt;
-			gRotate(coneRotation[1],0,1,0);
-			drawCone();
+	for(var k = 0; k < 2; k++){
+		l = -0.75+ (k*1.50);
+		for(var i = 0; i <10; i++){
+			gPush();
+			j = -2.75 + (i*0.6);
+				gTranslate(l,j,0);
+				gScale(0.1,0.3,0.1);
+				gPush();
+				{
+					setColor(vec4(0, 0.5, 0, 1.0));
+					drawSphere();	
+				}
+				gPop();
+			gPop();
 		}
+	}
+	for(var i = 0; i <10; i++){
+		gPush();
+		j = -2.25 + (i*0.6);
+			gTranslate(0,j,0);
+			gScale(0.1,0.3,0.1);
+			gPush();
+			{
+				setColor(vec4(0, 0.5, 0, 1.0));
+				drawSphere();	
+			}
+			gPop();
 		gPop();
-	gPop();
+	}
+	//bubbles
+	if(animFlag){
+		bubbles();
+	}
+	// Cone example
+	//gPush();
+		//gTranslate(conePosition[0],conePosition[1],conePosition[2]);
+		//gPush();
+		//{
+		//	setColor(vec4(1.0,1.0,0.0,1.0));
+		//	coneRotation[1] = coneRotation[1] + 90*dt;
+		//	gRotate(coneRotation[1],0,1,0);
+		//	drawCone();
+		//}
+		//gPop();
+	//gPop();
     
     if( animFlag )
         window.requestAnimFrame(render);
 }
-function Translate_Rotate(vector, initial_point, move){
-	var new_pos_forward = vector[0] + (dt);
-	var new_pos_back = vector[0] - (dt);
-	if (new_pos_back <= -(initial_point)){
-		move = 0;
-	}else if(new_pos_forward >= initial_point){
-		move = 1;
-	}
-	if(move == 1){
-		vector[0] = new_pos_back;
-	}else{
-		vector[0] = new_pos_forward;
-	}	
+function bubbles(){
+	gPush();
+		gTranslate(bubble_origin[0], bubble_origin[1], bubble_origin[2]);
+		gScale(0.1,0.1,0.1);
+		gPush();
+		{
+			setColor(vec4(1, 1, 1, 1.0));
+			bubble_origin[1] = bubble_origin[1] + 0.5*dt;
+			gTranslate(bubble_origin[1],0, 1,0);
+			if(bubble_origin[1] > 6.2){
+				bubble_origin[1] = 2;
+			}
+			drawSphere();	
+		}
+		gPop();
+	gPop();
+	
 }
 // A simple camera controller which uses an HTML element as the event
 // source for constructing a view matrix. Assign an "onchange"
