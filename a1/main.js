@@ -62,6 +62,8 @@ var cylinderPosition = [1.1,0,0];
 
 var coneRotation = [0,1,0];
 var conePosition = [3,4,0];
+var Fish_head_pos = [2,0,0];
+var Fish_head_direction = 1;
 
 // Setting the colour which is needed during illumination of a surface
 function setColor(c)
@@ -428,12 +430,15 @@ function render(timestamp) {
 	gPop();	
     //Fish front
 	gPush();
-		gTranslate(2,0,0);
+		gTranslate(Fish_head_pos[0],Fish_head_pos[1], Fish_head_pos[2]);
 		gRotate(60, 0,1,0);
 		gScale(0.5,0.5,0.5);
 		gPush();
 		{
 			setColor(vec4(0.5,0.5,0.5,1));
+			if(animFlag){
+				Translate_Rotate(Fish_head_pos, 2, Fish_head_direction);
+			}
 			drawCone();
 			
 		}
@@ -514,7 +519,20 @@ function render(timestamp) {
     if( animFlag )
         window.requestAnimFrame(render);
 }
-
+function Translate_Rotate(vector, initial_point, move){
+	var new_pos_forward = vector[0] + (dt);
+	var new_pos_back = vector[0] - (dt);
+	if (new_pos_back <= -(initial_point)){
+		move = 0;
+	}else if(new_pos_forward >= initial_point){
+		move = 1;
+	}
+	if(move == 1){
+		vector[0] = new_pos_back;
+	}else{
+		vector[0] = new_pos_forward;
+	}	
+}
 // A simple camera controller which uses an HTML element as the event
 // source for constructing a view matrix. Assign an "onchange"
 // function to the controller as follows to receive the updated X and
