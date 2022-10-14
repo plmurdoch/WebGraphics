@@ -51,7 +51,7 @@ var controller;
 // Then the animation is simply evolving those DOF over time.
 var sphereRotation = [0,0,0];
 var spherePosition = [0,-3.25,0];
-var spherePosition2 =[-1, -3.75, 0];
+
 var sphereScale = [0.25, 0.25, 0.25];
 
 var cubeRotation = [1,1,0];
@@ -62,9 +62,17 @@ var cylinderPosition = [-4,4,0];
 
 var coneRotation = [0,1,0];
 var conePosition = [3,4,0];
-var Fish_head_pos = [-2,0,0];
-var Fish_tail_pos = [-3,0,0];
 
+//Custom global variables
+var spherePosition2 =[-1, -3.75, 0];
+var theta = [0,0,0];
+var theta2 = [0,0,0];
+var theta3 = [0,0,0];
+var theta4 = [0,0,0];
+var Fish_head_pos = [Math.cos(theta[0])*2,0,0];
+var Fish_tail_pos = [Math.cos(theta2[0])*2,0,-1];
+var Fish_tail_top = [Math.cos(theta3[0])*2,0.1,-2];
+var Fish_tail_bot = [Math.cos(theta4[0])*2,-0.1,-2];
 var bubble_origin = [4, 2, 2];
 
 // Setting the colour which is needed during illumination of a surface
@@ -430,61 +438,103 @@ function render(timestamp) {
 		//}
 		//gPop();
 	//gPop();	
+	
+	
+	
+	
     //Fish front
 	gPush();
 		gTranslate(Fish_head_pos[0],Fish_head_pos[1], Fish_head_pos[2]);
-		gRotate(60, 0,1,0);
 		gScale(0.5,0.5,0.5);
+		gRotate(Math.tan(theta[0])*100,0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.5,0.5,0.5,1));
-			drawCone();
-		}
-		gPop();
-	gPop();
-	//fish back
-	gPush();
-		gTranslate(Fish_tail_pos[0],Fish_tail_pos[1], Fish_tail_pos[2]);
-		gRotate(-100, 0,1,0);
-		gScale(0.5,0.5,1.5);
-		gPush();
-		{
-			setColor(vec4(0.5,0,0,1));
 			if(animFlag){
+				theta[0] += 0.05;
+				theta[1] += 0.01
+				theta[2] += 0.05;
+				Fish_head_pos[0] = Math.cos(theta[0])*2;
+				Fish_head_pos[1] = Math.sin(theta[1])*2;
+				Fish_head_pos[2] = Math.sin(theta[2])*2;
+				gRotate(Math.cos(theta[0]),1,0,0,);
 			}
 			drawCone();
 		}
 		gPop();
 	gPop();
-	//fish tail (cones aswell)
+	
+	
+	//fish back
 	gPush();
-		gTranslate(-4,0.1,-0.5);
-		gRotate(-100, 0,1,0);
-		gRotate(-25,1,0,0);
-		gScale(0.1,0.1,0.5);
+		gTranslate(Fish_tail_pos[0],Fish_tail_pos[1], Fish_tail_pos[2]);
+		gRotate(180, 0,1,0);
+		gScale(0.5,0.5,1.75);
+		gRotate(Math.sin(theta[0])*100,0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
+			if(animFlag){
+				theta2[0] += 0.05;
+				theta2[1] += 0.05;
+				theta2[2] += 0.05;
+				Fish_tail_pos[0] = Math.cos(theta2[0])*2-4;
+				Fish_tail_pos[1] = Math.sin(theta2[1])*2-4;
+				Fish_tail_pos[2] = Math.sin(theta2[2])*2-4;
+				
+			}
 			drawCone();
 		}
 		gPop();
 	gPop();
 	
+	
+	//fish tail (cones aswell)
 	gPush();
-		gTranslate(-4,-0.1,-0.5);
-		gRotate(-100, 0,1,0);
-		gRotate(25,1,0,0);
+		gTranslate(Fish_tail_top[0],Fish_tail_top[1],Fish_tail_top[2]);
+		gRotate(180, 0,1,0);
+		gRotate(-25,1,0,0);
 		gScale(0.1,0.1,0.5);
+		gRotate(Math.cos(theta3[0])*100,0,0,1);
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
+			if(animFlag){
+				theta3[0] += 0.05;
+				theta3[1] += 0.01;
+				theta3[2] += 0.05;
+				Fish_tail_top[0] = Math.cos(theta3[0])*2;
+				Fish_tail_pos[1] = Math.sin(theta3[1])*2;
+				Fish_tail_top[2] = Math.sin(theta3[2])*2;
+			}
+			drawCone();
+		}
+		gPop();
+	gPop();
+	gPush();
+		gTranslate(Fish_tail_bot[0],Fish_tail_bot[1],Fish_tail_bot[2]);
+		gRotate(180, 0,1,0);
+		gRotate(25,1,0,0);
+		gScale(0.1,0.1,0.5);
+		gRotate(Math.cos(theta4[0])*100,0,0,1);
+		gPush();
+		{
+			setColor(vec4(0.5,0,0,1));
+			if(animFlag){
+				theta4[0] += 0.05;
+				theta4[1] += 0.02;
+				theta4[2] += 0.05;
+				Fish_tail_bot[0] = Math.cos(theta4[0])*2;
+				Fish_tail_pos[1] = Math.sin(theta4[1])*2;
+				Fish_tail_bot[2] = Math.sin(theta4[2])*2;
+			}
 			drawCone();
 		}
 		gPop();
 	gPop();
 	//fish eye right
 	gPush();
-		gTranslate(-1,0,0);
+		gTranslate(2.25,0.2,1);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
@@ -495,7 +545,7 @@ function render(timestamp) {
 	gPop();
 	//fish pupil right
 	gPush();
-		gTranslate(-1,0,0.1);
+		gTranslate(2.25,0.2,1.1);
 		gScale(0.05,0.05,0.05);
 		gPush();
 		{
@@ -506,7 +556,7 @@ function render(timestamp) {
 	gPop();
 	//fish eye left
 	gPush();
-		gTranslate(-1.5,0,0);
+		gTranslate(1.75,0.2,1);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
@@ -517,7 +567,7 @@ function render(timestamp) {
 	gPop();
 	//fish pupil left
 	gPush();
-		gTranslate(-1.5,0,0.1);
+		gTranslate(1.75,0.2,1.1);
 		gScale(0.05,0.05,0.05);
 		gPush();
 		{
