@@ -65,16 +65,28 @@ var conePosition = [3,4,0];
 
 //Custom global variables
 var spherePosition2 =[-1, -3.75, 0];
+var movement = [0,0,0];
+var human_head = [4+Math.cos(movement[0]),2+Math.sin(movement[1]),1];
+var human_body = [4+Math.cos(movement[0]) ,0.75+Math.sin(movement[1]),0];
+var human_hip =[3.75+Math.cos(movement[0]),-0.5+Math.sin(movement[1]),0];
+var human_leg = [3.75+Math.cos(movement[0]),-1.5+Math.sin(movement[1]),0];
+var human_foot = [3.75+Math.cos(movement[0]),-2+Math.sin(movement[1]),0.5];
 var theta = [0,0,0];
-var theta2 = [0,0,0];
-var theta3 = [0,0,0];
-var theta4 = [0,0,0];
 var Fish_head_pos = [Math.cos(theta[0])*2,0,0];
-var Fish_tail_pos = [Math.cos(theta2[0])*2,0,-1];
-var Fish_tail_top = [Math.cos(theta3[0])*2,0.1,-2];
-var Fish_tail_bot = [Math.cos(theta4[0])*2,-0.1,-2];
+var Fish_head_x_rad = 2;
+var Fish_tail_pos = [Math.cos(theta[0])*2,0,-1.5];
+var Fish_body_z_rad = -1.5; 
+var Fish_tail_top = [Math.cos(theta[0])*2,0.1,-2];
+var Fish_tail_z_rad = -2;
+var Fish_tail_bot = [Math.cos(theta[0])*2,-0.1,-2];
+var Fish_eye_right =[2.25,0.2,1];
+var Fish_eye_ri_x = 2.25;
+var Fish_pup_right= [2.25,0.2,1.1];
+var Fish_eye_left=[1.75,0.2,1];
+var Fish_pup_left=[1.75,0.2,1.1];
+var Fish_eye_le_x = 2.25;
 var bubble_origin = [4, 2, 2];
-
+var count = 0;
 // Setting the colour which is needed during illumination of a surface
 function setColor(c)
 {
@@ -312,23 +324,33 @@ function render(timestamp) {
 	gPop();
 	//Human model head
 	gPush();
-		gTranslate(4, 2, 1);
+		gTranslate(human_head[0], human_head[1], human_head[2]);
 		gScale(sphereScale[0], sphereScale[1], sphereScale[2]);
 		gPush();
 		{
 			setColor(vec4(0.8, 0, 0.8, 1.0));
+			if(animFlag){
+				movement[0] += 0.01;
+				movement[1] += 0.02;
+				human_head[0] = 4+(Math.cos(movement[0]))/2;
+				human_head[1]= 2+(Math.sin(movement[1]))/2;
+			}
 			drawSphere();
 		}
 		gPop();
 	gPop();
 	// Human model body
 	gPush();
-		gTranslate(4,0.75,0);
+		gTranslate(human_body[0],human_body[1],human_body[2]);
 		gScale(0.5, 1, 1);
 		gRotate(-15,0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
+			if(animFlag){
+				human_body[0] = 4+(Math.cos(movement[0]))/2;
+				human_body[1]= 0.75+(Math.sin(movement[1]))/2;
+			}
 			drawCube();
 		}
 		gPop();
@@ -336,44 +358,56 @@ function render(timestamp) {
 	
 	//Human right leg joint 1
 	gPush();
-		gTranslate(3.75,-0.5,0);
+		gTranslate(human_hip[0],human_hip[1],human_hip[2]);
 		gScale(0.1, 0.5, 0.1);
 		gRotate(-30,0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
+			if(animFlag){
+				human_hip[0] = 3.75+(Math.cos(movement[0]))/2;
+				human_hip[1]= (Math.sin(movement[1]))/2-0.5;
+			}
 			drawCube();
 		}
 		gPop();
 	gPop();
 	//Human right leg joint 2
 	gPush();
-		gTranslate(3.75,-1.5,0);
+		gTranslate(human_leg[0],human_leg[1],human_leg[2]);
 		gScale(0.1, 0.5, 0.1);
 		gRotate(-30,0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
+			if(animFlag){
+				human_leg[0] = 3.75+(Math.cos(movement[0]))/2;
+				human_leg[1]= (Math.sin(movement[1]))/2-1.5;
+			}
 			drawCube();
 		}
 		gPop();
 	gPop();
 	//Human right foot
 	gPush();
-		gTranslate(3.75,-2,0);
-		gScale(0.15, 0.10, 0.20);
+		gTranslate(human_foot[0],human_foot[1],human_foot[2]);
 		gRotate(-30,0,1,0);
 		
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
+			gScale(0.12, 0.05, 0.30);
+			if(animFlag){
+				human_foot[0] = 3.75+(Math.cos(movement[0]))/2;
+				human_foot[1]= (Math.sin(movement[1]))/2-2;
+			}
 			drawCube();
 		}
 		gPop();
 	gPop();
 	//Human left leg joint 1
 	gPush();
-		gTranslate(4.25,-0.5,0);
+		gTranslate(human_hip[0]+0.5,human_hip[1],human_hip[2]);
 		gScale(0.1, 0.5, 0.1);
 		gRotate(-30,0,1,0);
 		gPush();
@@ -385,7 +419,7 @@ function render(timestamp) {
 	gPop();
 	//Human left leg joint 2
 	gPush();
-		gTranslate(4.25,-1.5,0);
+		gTranslate(human_leg[0]+0.5,human_leg[1],human_leg[2]);
 		gScale(0.1, 0.5, 0.1);
 		gRotate(-30,0,1,0);
 		gPush();
@@ -397,13 +431,13 @@ function render(timestamp) {
 	gPop();
 	//Human left foot
 	gPush();
-		gTranslate(4.25,-2,0);
-		gScale(0.15, 0.10, 0.20);
+		gTranslate(human_foot[0]+0.5,human_foot[1],human_foot[2]);
 		gRotate(-30,0,1,0);
 		
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
+			gScale(0.12, 0.05, 0.3);
 			drawCube();
 		}
 		gPop();
@@ -445,19 +479,20 @@ function render(timestamp) {
     //Fish front
 	gPush();
 		gTranslate(Fish_head_pos[0],Fish_head_pos[1], Fish_head_pos[2]);
-		gScale(0.5,0.5,0.5);
-		gRotate(Math.tan(theta[0])*100,0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.5,0.5,0.5,1));
+			console.log(dt);
+			cylinderRotation[2] = cylinderRotation[2] -145*dt;
+			gRotate(cylinderRotation[2],0,1,0);
+			gScale(0.5,0.5,0.5);
 			if(animFlag){
 				theta[0] += 0.05;
-				theta[1] += 0.01
+				theta[1] += 0.01;
 				theta[2] += 0.05;
-				Fish_head_pos[0] = Math.cos(theta[0])*2;
-				Fish_head_pos[1] = Math.sin(theta[1])*2;
+				Fish_head_pos[0] = Math.cos(theta[0])*Fish_head_x_rad;
+				Fish_head_pos[1] = Math.sin(theta[1]);
 				Fish_head_pos[2] = Math.sin(theta[2])*2;
-				gRotate(Math.cos(theta[0]),1,0,0,);
 			}
 			drawCone();
 		}
@@ -468,19 +503,16 @@ function render(timestamp) {
 	//fish back
 	gPush();
 		gTranslate(Fish_tail_pos[0],Fish_tail_pos[1], Fish_tail_pos[2]);
-		gRotate(180, 0,1,0);
-		gScale(0.5,0.5,1.75);
-		gRotate(Math.sin(theta[0])*100,0,1,0);
+		gRotate(cylinderRotation[2],0,1,0);
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
+			gRotate(180, 0, 1, 0);
+			gScale(0.5,0.5, 1.5);
 			if(animFlag){
-				theta2[0] += 0.05;
-				theta2[1] += 0.05;
-				theta2[2] += 0.05;
-				Fish_tail_pos[0] = Math.cos(theta2[0])*2-4;
-				Fish_tail_pos[1] = Math.sin(theta2[1])*2-4;
-				Fish_tail_pos[2] = Math.sin(theta2[2])*2-4;
+				Fish_tail_pos[0] = Math.cos(theta[0])*(Fish_head_x_rad);
+				Fish_tail_pos[1] = Math.sin(theta[1]);
+				Fish_tail_pos[2] = Math.sin(theta[2])*2 ;
 				
 			}
 			drawCone();
@@ -495,17 +527,13 @@ function render(timestamp) {
 		gRotate(180, 0,1,0);
 		gRotate(-25,1,0,0);
 		gScale(0.1,0.1,0.5);
-		gRotate(Math.cos(theta3[0])*100,0,0,1);
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
 			if(animFlag){
-				theta3[0] += 0.05;
-				theta3[1] += 0.01;
-				theta3[2] += 0.05;
-				Fish_tail_top[0] = Math.cos(theta3[0])*2;
-				Fish_tail_pos[1] = Math.sin(theta3[1])*2;
-				Fish_tail_top[2] = Math.sin(theta3[2])*2;
+				Fish_tail_top[0] = Math.cos(theta[0])*Fish_head_x_rad;
+				Fish_tail_top[1] = Math.sin(theta[1]);
+				Fish_tail_top[2] = Math.sin(theta[2])*2 - 2;
 			}
 			drawCone();
 		}
@@ -516,17 +544,13 @@ function render(timestamp) {
 		gRotate(180, 0,1,0);
 		gRotate(25,1,0,0);
 		gScale(0.1,0.1,0.5);
-		gRotate(Math.cos(theta4[0])*100,0,0,1);
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
 			if(animFlag){
-				theta4[0] += 0.05;
-				theta4[1] += 0.02;
-				theta4[2] += 0.05;
-				Fish_tail_bot[0] = Math.cos(theta4[0])*2;
-				Fish_tail_pos[1] = Math.sin(theta4[1])*2;
-				Fish_tail_bot[2] = Math.sin(theta4[2])*2;
+				Fish_tail_bot[0] = Math.cos(theta[0])*Fish_head_x_rad;
+				Fish_tail_bot[1] = Math.sin(theta[1]);
+				Fish_tail_bot[2] = Math.sin(theta[2])*2 -2;
 			}
 			drawCone();
 		}
@@ -534,44 +558,64 @@ function render(timestamp) {
 	gPop();
 	//fish eye right
 	gPush();
-		gTranslate(2.25,0.2,1);
+		gTranslate(Fish_eye_right[0], Fish_eye_right[1],Fish_eye_right[2]);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
 			setColor(vec4(1, 1, 1, 1.0));
+			if(animFlag){
+				Fish_eye_right[0] = Math.cos(theta[0])*2;
+				Fish_eye_right[1] = Math.sin(theta[1]);
+				Fish_eye_right[2] = Math.sin(theta[2])*2+1;
+			}
 			drawSphere();	
 		}
 		gPop();
 	gPop();
 	//fish pupil right
 	gPush();
-		gTranslate(2.25,0.2,1.1);
+		gTranslate(Fish_pup_right[0], Fish_pup_right[1], Fish_pup_right[2]);
 		gScale(0.05,0.05,0.05);
 		gPush();
 		{
 			setColor(vec4(0, 0, 0, 1.0));
+			if(animFlag){
+				Fish_pup_right[0] = Math.cos(theta[0])*2;
+				Fish_pup_right[1] = Math.sin(theta[1]);
+				Fish_pup_right[2] = Math.sin(theta[2])*2+1;
+			}
 			drawSphere();	
 		}
 		gPop();
 	gPop();
 	//fish eye left
 	gPush();
-		gTranslate(1.75,0.2,1);
+		gTranslate(Fish_eye_left[0], Fish_eye_left[1], Fish_eye_left[2]);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
 			setColor(vec4(1, 1, 1, 1.0));
+			if(animFlag){
+				Fish_eye_left[0] = Math.cos(theta[0])*2;
+				Fish_eye_left[1] = Math.sin(theta[1]);
+				Fish_eye_left[2] = Math.sin(theta[2])*2+1;
+			}
 			drawSphere();	
 		}
 		gPop();
 	gPop();
 	//fish pupil left
 	gPush();
-		gTranslate(1.75,0.2,1.1);
+		gTranslate(Fish_pup_left[0],Fish_pup_left[1],Fish_pup_left[2]);
 		gScale(0.05,0.05,0.05);
 		gPush();
 		{
 			setColor(vec4(0, 0, 0, 1.0));
+			if(animFlag){
+				Fish_pup_left[0] = Math.cos(theta[0])*2;
+				Fish_pup_left[1] = Math.sin(theta[1]);
+				Fish_pup_left[2] = Math.sin(theta[2])*2+1;
+			}
 			drawSphere();	
 		}
 		gPop();
@@ -628,7 +672,8 @@ function render(timestamp) {
 }
 function bubbles(){
 	gPush();
-		gTranslate(bubble_origin[0], bubble_origin[1], bubble_origin[2]);
+
+		gTranslate(human_head[0], bubble_origin[1], bubble_origin[2]);
 		gScale(0.1,0.1,0.1);
 		gPush();
 		{
