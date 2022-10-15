@@ -14,7 +14,7 @@ Animations are synched to realtime(timestamp and dt), will not move until animat
 However, figures jump positions when animation request sent due to change in time.
 Seaweed experiences movement left and right uniformly but not at individual joints
 Fish rotates in circular motion and rotates around fixed points.
-However, does not swim due to inexperience with regard to joint movements for fin design.
+However, does not swim due to inexperience with regard to joint movements for fin and rotation errors.
 There is a clear lack of understanding on my part with regard to realtime synchronization and joint rotations. 
 Which is why i state evaluation objective 12 is partially implemented.I should have given myself way more time 
 to complete this assignment and learn how to better move joints. 
