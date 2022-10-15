@@ -65,28 +65,15 @@ var conePosition = [3,4,0];
 
 //Custom global variables
 var spherePosition2 =[-1, -3.75, 0];
-var movement = [0,0,0];
-var human_head = [4+Math.cos(movement[0]),2+Math.sin(movement[1]),1];
-var human_body = [4+Math.cos(movement[0]) ,0.75+Math.sin(movement[1]),0];
-var human_hip =[3.75+Math.cos(movement[0]),-0.5+Math.sin(movement[1]),0];
-var human_leg = [3.75+Math.cos(movement[0]),-1.5+Math.sin(movement[1]),0];
-var human_foot = [3.75+Math.cos(movement[0]),-2+Math.sin(movement[1]),0.5];
-var theta = [0,0,0];
-var Fish_head_pos = [Math.cos(theta[0])*2,0,0];
+var human_head = [4,2,1];
+var human_body = [4 ,0.75,0];
+var human_hip =[3.75,-0.5,0];
+var human_leg = [3.75,-1.5,0];
+var human_foot = [3.75,,0.5];
+var Fish_head_pos = [2,0,0];
 var Fish_head_x_rad = 2;
-var Fish_tail_pos = [Math.cos(theta[0])*2,0,-1.5];
-var Fish_body_z_rad = -1.5; 
-var Fish_tail_top = [Math.cos(theta[0])*2,0.1,-2];
-var Fish_tail_z_rad = -2;
-var Fish_tail_bot = [Math.cos(theta[0])*2,-0.1,-2];
-var Fish_eye_right =[2.25,0.2,1];
-var Fish_eye_ri_x = 2.25;
-var Fish_pup_right= [2.25,0.2,1.1];
-var Fish_eye_left=[1.75,0.2,1];
-var Fish_pup_left=[1.75,0.2,1.1];
-var Fish_eye_le_x = 2.25;
 var bubble_origin = [4, 2, 2];
-var count = 0;
+var rerender = false;
 // Setting the colour which is needed during illumination of a surface
 function setColor(c)
 {
@@ -270,8 +257,6 @@ function render(timestamp) {
     // set all the matrices
     setAllMatrices();
     
-	if( animFlag )
-    {
 		// dt is the change in time or delta time from the last frame to this one
 		// in animation typically we have some property or degree of freedom we want to evolve over time
 		// For example imagine x is the position of a thing.
@@ -280,10 +265,10 @@ function render(timestamp) {
 		// x_new = x + v*dt
 		// That is the new position equals the current position + the rate of of change of that position (often a velocity or speed), times the change in time
 		// We can do this with angles or positions, the whole x,y,z position or just one dimension. It is up to us!
+	if(animFlag){
 		dt = (timestamp - prevTime) / 1000.0;
 		prevTime = timestamp;
 	}
-	
 	//Ground Box
 	gPush();
 		gTranslate(0,-5,0);
@@ -330,10 +315,8 @@ function render(timestamp) {
 		{
 			setColor(vec4(0.8, 0, 0.8, 1.0));
 			if(animFlag){
-				movement[0] += 0.01;
-				movement[1] += 0.02;
-				human_head[0] = 4+(Math.cos(movement[0]))/2;
-				human_head[1]= 2+(Math.sin(movement[1]))/2;
+				human_head[0] = 4+(Math.cos(timestamp/1000))/2;
+				human_head[1]= 2+(Math.sin(timestamp/500))/2;
 			}
 			drawSphere();
 		}
@@ -348,8 +331,8 @@ function render(timestamp) {
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
 			if(animFlag){
-				human_body[0] = 4+(Math.cos(movement[0]))/2;
-				human_body[1]= 0.75+(Math.sin(movement[1]))/2;
+				human_body[0] = 4+(Math.cos(timestamp/1000))/2;
+				human_body[1]= 0.75+(Math.sin(timestamp/500))/2;
 			}
 			drawCube();
 		}
@@ -358,264 +341,159 @@ function render(timestamp) {
 	
 	//Human right leg joint 1
 	gPush();
-		gTranslate(human_hip[0],human_hip[1],human_hip[2]);
-		gScale(0.1, 0.5, 0.1);
-		gRotate(-30,0,1,0);
+		gTranslate(human_body[0],human_body[1],human_body[2]);
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
-			if(animFlag){
-				human_hip[0] = 3.75+(Math.cos(movement[0]))/2;
-				human_hip[1]= (Math.sin(movement[1]))/2-0.5;
-			}
+			gTranslate(-0.25, -1.25, 0);
+			gScale(0.1, 0.5, 0.1);
+			gRotate(-30,0,1,0);
 			drawCube();
 		}
 		gPop();
-	gPop();
-	//Human right leg joint 2
-	gPush();
-		gTranslate(human_leg[0],human_leg[1],human_leg[2]);
-		gScale(0.1, 0.5, 0.1);
-		gRotate(-30,0,1,0);
+		//Human right leg joint 2
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
-			if(animFlag){
-				human_leg[0] = 3.75+(Math.cos(movement[0]))/2;
-				human_leg[1]= (Math.sin(movement[1]))/2-1.5;
-			}
+			gTranslate(-0.25, -2.25, 0);
+			gScale(0.1, 0.5, 0.1);
+			gRotate(-30,0,1,0);
 			drawCube();
 		}
 		gPop();
-	gPop();
-	//Human right foot
-	gPush();
-		gTranslate(human_foot[0],human_foot[1],human_foot[2]);
-		gRotate(-30,0,1,0);
-		
+		//Human foot
 		gPush();
 		{
 			setColor(vec4(0.8,0.0,0.8,1));
-			gScale(0.12, 0.05, 0.30);
-			if(animFlag){
-				human_foot[0] = 3.75+(Math.cos(movement[0]))/2;
-				human_foot[1]= (Math.sin(movement[1]))/2-2;
-			}
-			drawCube();
-		}
-		gPop();
-	gPop();
-	//Human left leg joint 1
-	gPush();
-		gTranslate(human_hip[0]+0.5,human_hip[1],human_hip[2]);
-		gScale(0.1, 0.5, 0.1);
-		gRotate(-30,0,1,0);
-		gPush();
-		{
-			setColor(vec4(0.8,0.0,0.8,1));
-			drawCube();
-		}
-		gPop();
-	gPop();
-	//Human left leg joint 2
-	gPush();
-		gTranslate(human_leg[0]+0.5,human_leg[1],human_leg[2]);
-		gScale(0.1, 0.5, 0.1);
-		gRotate(-30,0,1,0);
-		gPush();
-		{
-			setColor(vec4(0.8,0.0,0.8,1));
-			drawCube();
-		}
-		gPop();
-	gPop();
-	//Human left foot
-	gPush();
-		gTranslate(human_foot[0]+0.5,human_foot[1],human_foot[2]);
-		gRotate(-30,0,1,0);
-		
-		gPush();
-		{
-			setColor(vec4(0.8,0.0,0.8,1));
+			gTranslate(-0.25, -2.75, 0.3);
 			gScale(0.12, 0.05, 0.3);
+			gRotate(-30,0,1,0);
+			drawCube();
+		}
+		gPop();
+		//Human left leg joint 1
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			gTranslate(0.25, -1.25, 0);
+			gScale(0.1, 0.5, 0.1);
+			gRotate(-30,0,1,0);
+			drawCube();
+		}
+		gPop();
+		//human left leg joint 2
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			gTranslate(0.25, -2.25, 0);
+			gScale(0.1, 0.5, 0.1);
+			gRotate(-30,0,1,0);
+			drawCube();
+		}
+		gPop();
+		//human left foot
+		gPush();
+		{
+			setColor(vec4(0.8,0.0,0.8,1));
+			gTranslate(0.25, -2.75, 0.3);
+			gScale(0.12, 0.05, 0.3);
+			gRotate(-30,0,1,0);
 			drawCube();
 		}
 		gPop();
 	gPop();
 	
-	// Cube example
-	//gPush();
-		//gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
-		//gPush();
-		//{
-			//setColor(vec4(0.0,1.0,0.0,1.0));
-			// Here is an example of integration to rotate the cube around the y axis at 30 degrees per second
-			// new cube rotation around y = current cube rotation around y + 30deg/s*dt
-		//	cubeRotation[1] = cubeRotation[1] + 30*dt;
-			// This calls a simple helper function to apply the rotation (theta, x, y, z), 
-			// where x,y,z define the axis of rotation. Here is is the y axis, (0,1,0).
-			//gRotate(cubeRotation[1],0,1,0);
-			//drawCube();
-		//}
-		//gPop();
-	//gPop();
-    
-	// Cylinder example
-	//gPush();
-		//gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
-		//gPush();
-		//{
-			//setColor(vec4(-4.0,0.0,4.0,1.0));
-			//cylinderRotation[1] = cylinderRotation[1] + 60*dt;
-			//gRotate(cylinderRotation[1],0,1,0);
-			//drawCylinder();
-		//}
-		//gPop();
-	//gPop();	
 	
-	
-	
-	
-    //Fish front
+    //Fish head
 	gPush();
 		gTranslate(Fish_head_pos[0],Fish_head_pos[1], Fish_head_pos[2]);
 		gPush();
 		{
 			setColor(vec4(0.5,0.5,0.5,1));
-			console.log(dt);
-			cylinderRotation[2] = cylinderRotation[2] -145*dt;
+			if(animFlag){
+				cylinderRotation[3] =((Math.sin(dt/1000)^2)+(Math.cos(dt/1000)^2))/8.8;
+				cylinderRotation[2] = cylinderRotation[2] - cylinderRotation[3];
+			}
 			gRotate(cylinderRotation[2],0,1,0);
 			gScale(0.5,0.5,0.5);
 			if(animFlag){
-				theta[0] += 0.05;
-				theta[1] += 0.01;
-				theta[2] += 0.05;
-				Fish_head_pos[0] = Math.cos(theta[0])*Fish_head_x_rad;
-				Fish_head_pos[1] = Math.sin(theta[1]);
-				Fish_head_pos[2] = Math.sin(theta[2])*2;
+				Fish_head_pos[0] = Math.cos(timestamp/1000)*Fish_head_x_rad;
+				Fish_head_pos[1] = Math.sin(timestamp/2000)*2.1;
+				Fish_head_pos[2] = Math.sin(timestamp/1000);
 			}
 			drawCone();
 		}
 		gPop();
 	gPop();
-	
-	
-	//fish back
+	//Fish Rest
 	gPush();
-		gTranslate(Fish_tail_pos[0],Fish_tail_pos[1], Fish_tail_pos[2]);
+		gTranslate(Fish_head_pos[0], Fish_head_pos[1], Fish_head_pos[2]);
 		gRotate(cylinderRotation[2],0,1,0);
+		//Fish Body
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
+			gTranslate(0,0, -1);
 			gRotate(180, 0, 1, 0);
 			gScale(0.5,0.5, 1.5);
-			if(animFlag){
-				Fish_tail_pos[0] = Math.cos(theta[0])*(Fish_head_x_rad);
-				Fish_tail_pos[1] = Math.sin(theta[1]);
-				Fish_tail_pos[2] = Math.sin(theta[2])*2 ;
-				
-			}
 			drawCone();
 		}
 		gPop();
-	gPop();
-	
-	
-	//fish tail (cones aswell)
-	gPush();
-		gTranslate(Fish_tail_top[0],Fish_tail_top[1],Fish_tail_top[2]);
-		gRotate(180, 0,1,0);
-		gRotate(-25,1,0,0);
-		gScale(0.1,0.1,0.5);
+		//Fish tail Upper
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
-			if(animFlag){
-				Fish_tail_top[0] = Math.cos(theta[0])*Fish_head_x_rad;
-				Fish_tail_top[1] = Math.sin(theta[1]);
-				Fish_tail_top[2] = Math.sin(theta[2])*2 - 2;
-			}
+			gTranslate(0,0.3, -2.2);
+			gRotate(180, 0,1,0);
+			gRotate(-25,1,0,0);
+			gScale(0.1,0.1,1);
 			drawCone();
 		}
 		gPop();
-	gPop();
-	gPush();
-		gTranslate(Fish_tail_bot[0],Fish_tail_bot[1],Fish_tail_bot[2]);
-		gRotate(180, 0,1,0);
-		gRotate(25,1,0,0);
-		gScale(0.1,0.1,0.5);
+		//Fish tail lower
 		gPush();
 		{
 			setColor(vec4(0.5,0,0,1));
-			if(animFlag){
-				Fish_tail_bot[0] = Math.cos(theta[0])*Fish_head_x_rad;
-				Fish_tail_bot[1] = Math.sin(theta[1]);
-				Fish_tail_bot[2] = Math.sin(theta[2])*2 -2;
-			}
+			gTranslate(0,-0.1, -2);
+			gRotate(180, 0,1,0);
+			gRotate(25,1,0,0);
+			gScale(0.1,0.1,0.5);
 			drawCone();
 		}
 		gPop();
-	gPop();
-	//fish eye right
-	gPush();
-		gTranslate(Fish_eye_right[0], Fish_eye_right[1],Fish_eye_right[2]);
-		gScale(0.1,0.1,0.1);
+		//Fish eye right
 		gPush();
 		{
 			setColor(vec4(1, 1, 1, 1.0));
-			if(animFlag){
-				Fish_eye_right[0] = Math.cos(theta[0])*2;
-				Fish_eye_right[1] = Math.sin(theta[1]);
-				Fish_eye_right[2] = Math.sin(theta[2])*2+1;
-			}
+			gTranslate(-0.25, 0.2,0);
+			gScale(0.1,0.1,0.1);
 			drawSphere();	
 		}
 		gPop();
-	gPop();
-	//fish pupil right
-	gPush();
-		gTranslate(Fish_pup_right[0], Fish_pup_right[1], Fish_pup_right[2]);
-		gScale(0.05,0.05,0.05);
+		//Fish pupil right
 		gPush();
 		{
 			setColor(vec4(0, 0, 0, 1.0));
-			if(animFlag){
-				Fish_pup_right[0] = Math.cos(theta[0])*2;
-				Fish_pup_right[1] = Math.sin(theta[1]);
-				Fish_pup_right[2] = Math.sin(theta[2])*2+1;
-			}
+			gTranslate(-0.25, 0.2, 0.1);
+			gScale(0.05,0.05,0.05);
 			drawSphere();	
 		}
 		gPop();
-	gPop();
-	//fish eye left
-	gPush();
-		gTranslate(Fish_eye_left[0], Fish_eye_left[1], Fish_eye_left[2]);
-		gScale(0.1,0.1,0.1);
+		//Fish eye left 
 		gPush();
 		{
 			setColor(vec4(1, 1, 1, 1.0));
-			if(animFlag){
-				Fish_eye_left[0] = Math.cos(theta[0])*2;
-				Fish_eye_left[1] = Math.sin(theta[1]);
-				Fish_eye_left[2] = Math.sin(theta[2])*2+1;
-			}
+			gTranslate(0.25, 0.2, 0);
+			gScale(0.1,0.1,0.1);
 			drawSphere();	
 		}
 		gPop();
-	gPop();
-	//fish pupil left
-	gPush();
-		gTranslate(Fish_pup_left[0],Fish_pup_left[1],Fish_pup_left[2]);
-		gScale(0.05,0.05,0.05);
+		//Fish pupil left
 		gPush();
 		{
 			setColor(vec4(0, 0, 0, 1.0));
-			if(animFlag){
-				Fish_pup_left[0] = Math.cos(theta[0])*2;
-				Fish_pup_left[1] = Math.sin(theta[1]);
-				Fish_pup_left[2] = Math.sin(theta[2])*2+1;
-			}
+			gTranslate(0.25,0.2, 0.1);
+			gScale(0.05,0.05,0.05);
 			drawSphere();	
 		}
 		gPop();
@@ -627,10 +505,13 @@ function render(timestamp) {
 			gPush();
 			j = -2.75 + (i*0.6);
 				gTranslate(l,j,0);
-				gScale(0.1,0.3,0.1);
 				gPush();
 				{
 					setColor(vec4(0, 0.5, 0, 1.0));
+					if(animFlag){
+						gTranslate((Math.cos(timestamp/1000))/8, 0,0);
+					}
+					gScale(0.1,0.3,0.1);
 					drawSphere();	
 				}
 				gPop();
@@ -641,10 +522,13 @@ function render(timestamp) {
 		gPush();
 		j = -2.25 + (i*0.6);
 			gTranslate(0,j,0);
-			gScale(0.1,0.3,0.1);
 			gPush();
 			{
 				setColor(vec4(0, 0.5, 0, 1.0));
+				if(animFlag){
+					gTranslate((Math.cos(timestamp/1000))/8, 0,0);
+				}
+				gScale(0.1,0.3,0.1);
 				drawSphere();	
 			}
 			gPop();
@@ -652,23 +536,12 @@ function render(timestamp) {
 	}
 	//bubbles
 	if(animFlag){
-		bubbles();
+		for(var i = 0; i < 10; i++){
+			
+			bubbles();
+		}
 	}
-	// Cone example
-	//gPush();
-		//gTranslate(conePosition[0],conePosition[1],conePosition[2]);
-		//gPush();
-		//{
-		//	setColor(vec4(1.0,1.0,0.0,1.0));
-		//	coneRotation[1] = coneRotation[1] + 90*dt;
-		//	gRotate(coneRotation[1],0,1,0);
-		//	drawCone();
-		//}
-		//gPop();
-	//gPop();
-    
-    if( animFlag )
-        window.requestAnimFrame(render);
+    window.requestAnimFrame(render);
 }
 function bubbles(){
 	gPush();
@@ -681,7 +554,7 @@ function bubbles(){
 			bubble_origin[1] = bubble_origin[1] + 0.5*dt;
 			gTranslate(bubble_origin[1],0, 1,0);
 			if(bubble_origin[1] > 6.2){
-				bubble_origin[1] = 2;
+				bubble_origin[1] = human_head[1];
 			}
 			drawSphere();	
 		}
