@@ -503,14 +503,180 @@ function render(timestamp) {
 	// You may be wondering where the texture coordinates are!
 	// We've modified the object.js to add in support for this attribute array!
 	gPush();
-	{
+	{	
+		gTranslate(-2, -2, 2);
 		bezierRotation[2] = bezierRotation[2] + 30*dt;
 		gRotate(bezierRotation[2],0,0,1);
-		drawB3(gBezierPatch1);
+		gPush();
+		{
+			gScale(0.6,0.6,1.5);
+			drawCube();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,2);
+			gScale(0.5, 0.5, 0.5);
+			drawSphere();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(1,0,0);
+			gRotate(-30, 0,1,0);
+			gPush();
+			{
+				gTranslate(0,0,0.5);
+				gScale(0.125,0.125,0.125);
+				drawSphere();
+			}
+			gPop();
+			gPush();
+			{
+				gScale(0.25,0.25, 1);
+				drawCylinder();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0,-1);
+				gPush();
+				{
+					gScale(0.25,0.25, 1);
+					drawCylinder();
+				}
+				gPop();
+				gPush();
+				{
+					gTranslate(0,0,-0.75);
+					gScale(0.25,0.25,0.25);
+					drawSphere();
+				}
+				gPop();
+			}	
+			gPop();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(-1,0,0);
+			gRotate(30, 0,1,0);
+			gPush();
+				{
+					gTranslate(0,0,0.5);
+					gScale(0.125,0.125,0.125);
+					drawSphere();
+				}
+				gPop();
+			gPush();
+			{
+				gScale(0.25,0.25, 1);
+				drawCylinder();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0,-1);
+				gPush();
+				{
+					gScale(0.25,0.25, 1);
+					drawCylinder();
+				}
+				gPop();
+				gPush();
+				{
+					gTranslate(0,0,-0.75);
+					gScale(0.25,0.25,0.25);
+					drawSphere();
+				}
+				gPop();
+			}
+			gPop();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0.25,0,-3);
+			gPush();
+			{
+				gScale(0.15,0.15, 1);
+				drawCube();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0,-1);
+				gPush();
+				{
+					gScale(0.15,0.15, 1);
+					drawCube();
+				}
+				gPop();
+				gPush();
+				{
+					gTranslate(0,0.2,-1);
+					gScale(0.20,0.45,0.1);
+					drawCube();
+				}
+				gPop();
+			}
+			gPop();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(-0.25,0,-3);
+			gPush();
+			{
+				gScale(0.15,0.15, 1);
+				drawCube();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0,-1);
+				gPush();
+				{
+					gScale(0.15,0.15, 1);
+					drawCube();
+				}
+				gPop();
+				gPush();
+				{
+					gTranslate(0,0.2,-1);
+					gScale(0.20,0.45,0.1);
+					drawCube();
+				}
+				gPop();
+			}
+			gPop();
+		}
+		gPop();
 	}
-	gPop() ;
-	
-    
+	gPop(); 
+	gPush();
+	{
+		gTranslate(4,0,0);
+		gPush();
+		{
+			gScale(2,2,3);
+			drawCylinder();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,1.5);
+			drawSphere();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,-1.5);
+			drawSphere();
+		}
+		gPop();
+	}
+	gPop();
     if( animFlag )
         window.requestAnimFrame(render);
 }
