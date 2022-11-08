@@ -520,161 +520,10 @@ function render(timestamp) {
 			drawSphere();
 		}
 		gPop();
-		gPush();
-		{
-			gTranslate(1,0,0);
-			gPush();
-			{
-				gTranslate(0,0,0.5);
-				//gRotate(bezierRotation[2],1,0,0);
-				gTranslate(0,0,-0.5);
-				gPush();
-				{
-					gTranslate(0,0,0.5);
-					gScale(0.125,0.125,0.125);
-					drawSphere();
-				}
-				gPop();
-				gPush();
-				{
-					gScale(0.25,0.25, 1);
-					drawCylinder();
-				}
-				gPop();
-				gPush();
-				{
-					gTranslate(0,0,-0.5);
-					gRotate(90,1,0,0);
-					gTranslate(0,0,0.5);
-					gPush();
-					{
-						gTranslate(0,0,-0.5);
-						gScale(0.125,0.125, 0.125);
-						drawSphere();
-					}
-					gPop();
-					gPush();
-					{
-						gTranslate(0,0,-1);
-						gPush();
-						{
-							gScale(0.25,0.25, 1);
-							drawCylinder();
-						}
-						gPop();
-						gPush();
-						{
-							gTranslate(0,0,-0.75);
-							gScale(0.25,0.25,0.25);
-							drawSphere();
-						}
-						gPop();
-					}	
-					gPop();
-				}
-				gPop();
-			}
-			gPop();
-			
-		}
-		gPop();
-		gPush();
-		{
-			gTranslate(-1,0,0);
-			gRotate(30, 0,1,0);
-			gPush();
-				{
-					gTranslate(0,0,0.5);
-					gScale(0.125,0.125,0.125);
-					drawSphere();
-				}
-				gPop();
-			gPush();
-			{
-				gScale(0.25,0.25, 1);
-				drawCylinder();
-			}
-			gPop();
-			gPush();
-			{
-				gTranslate(0,0,-1);
-				gPush();
-				{
-					gScale(0.25,0.25, 1);
-					drawCylinder();
-				}
-				gPop();
-				gPush();
-				{
-					gTranslate(0,0,-0.75);
-					gScale(0.25,0.25,0.25);
-					drawSphere();
-				}
-				gPop();
-			}
-			gPop();
-		}
-		gPop();
-		gPush();
-		{
-			gTranslate(0.25,0,-3);
-			gPush();
-			{
-				gScale(0.15,0.15, 1);
-				drawCube();
-			}
-			gPop();
-			gPush();
-			{
-				gTranslate(0,0,-1);
-				gPush();
-				{
-					gScale(0.15,0.15, 1);
-					drawCube();
-				}
-				gPop();
-				gPush();
-				{
-					gTranslate(0,0.2,-1);
-					gScale(0.20,0.45,0.1);
-					drawCube();
-				}
-				gPop();
-			}
-			gPop();
-		}
-		gPop();
-		gPush();
-		{
-			gTranslate(-0.25,0,-3);
-			gPush();
-			{
-				gScale(0.15,0.15, 1);
-				drawCube();
-			}
-			gPop();
-			gPush();
-			{
-				gTranslate(0,0,-1);
-				gPush();
-				{
-					gScale(0.15,0.15, 1);
-					drawCube();
-				}
-				gPop();
-				gPush();
-				{
-					gTranslate(0,0.2,-1);
-					gScale(0.20,0.45,0.1);
-					drawCube();
-				}
-				gPop();
-			}
-			gPop();
-		}
-		gPop();
+		arm_joints(dt)
+		leg_joints(dt)
 	}
-	gPop(); 
+	gPop();
 	gPush();
 	{
 		gTranslate(4,0,0);
@@ -700,6 +549,176 @@ function render(timestamp) {
 	gPop();
     if( animFlag )
         window.requestAnimFrame(render);
+}
+function arm_joints(change_time){
+	gPush();
+	{
+		gTranslate(1,0,0);
+		gRotate(-45, 0,1,0);
+		gPush();
+		{
+			gTranslate(0,0,0.5);
+			gTranslate(0,0,-0.5);
+			gPush();
+			{
+				gTranslate(0,0,0.5);
+				gScale(0.125,0.125,0.125);
+				drawSphere();
+			}
+			gPop();
+			gPush();
+			{
+				gScale(0.25,0.25, 1);
+				drawCylinder();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0,-0.5);
+				gRotate(90,1,0,0);
+				gTranslate(0,0,0.5);
+				gPush();
+				{
+					gTranslate(0,0,-0.5);
+					gScale(0.125,0.125, 0.125);
+					drawSphere();
+				}
+				gPop();
+				gPush();
+				{
+					gTranslate(0,0,-1);
+					gPush();
+					{
+						gScale(0.25,0.25, 1);
+						drawCylinder();
+					}
+					gPop();
+					gPush();
+					{
+						gTranslate(0,0,-0.75);
+						gScale(0.25,0.25,0.25);
+						drawSphere();
+					}
+					gPop();
+				}	
+				gPop();
+			}
+			gPop();
+		}
+		gPop();	
+	}
+	gPop();
+	gPush();
+	{
+		gTranslate(-1,0,0);
+		gRotate(45, 0,1,0);
+		gPush();
+			{
+				gTranslate(0,0,0.5);
+				gScale(0.125,0.125,0.125);
+				drawSphere();
+			}
+			gPop();
+		gPush();
+		{
+			gScale(0.25,0.25, 1);
+			drawCylinder();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,-0.5);
+			gRotate(90,1,0,0);
+			gTranslate(0,0,0.5);
+			gPush();
+			{
+				gTranslate(0,0,-0.5);
+				gScale(0.125,0.125, 0.125);
+				drawSphere();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0,-1);
+				gPush();
+				{
+					gScale(0.25,0.25, 1);
+					drawCylinder();
+				}
+				gPop();
+				gPush();
+				{
+					gTranslate(0,0,-0.75);
+					gScale(0.25,0.25,0.25);
+					drawSphere();
+				}
+				gPop();
+			}
+			gPop();
+		}
+		gPop();
+	}
+	gPop();
+}
+function leg_joints(change_time){
+	gPush();
+	{
+		gTranslate(0.25,0,-2.5);
+		gPush();
+		{
+			gScale(0.15,0.15, 1);
+			drawCube();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,-1);
+			gPush();
+			{
+				gScale(0.15,0.15, 1);
+				drawCube();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0.2,-1);
+				gScale(0.20,0.45,0.1);
+				drawCube();
+			}
+			gPop();
+		}
+		gPop();
+	}
+	gPop();
+	gPush();
+	{
+		gTranslate(-0.25,0,-2.5);
+		gPush();
+		{
+			gScale(0.15,0.15, 1);
+			drawCube();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,-1);
+			gPush();
+			{
+				gScale(0.15,0.15, 1);
+				drawCube();
+			}
+			gPop();
+			gPush();
+			{
+				gTranslate(0,0.2,-1);
+				gScale(0.20,0.45,0.1);
+				drawCube();
+			}
+			gPop();
+		}
+		gPop();
+	}
+	gPop();
 }
 
 // A simple camera controller which uses an HTML element as the event
