@@ -50,7 +50,9 @@ var controller;
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
 var bezierRotation = [0,0,0];
-
+var arm_angle1 = 0;
+var arm_angle2 = 90;
+var reverse = 0;
 var useTextures = 1;
 
 //making a texture image procedurally
@@ -506,7 +508,7 @@ function render(timestamp) {
 	{	
 		gTranslate(-2, -2, 2);
 		bezierRotation[2] = bezierRotation[2] + 30*dt;
-		gRotate(bezierRotation[2],0,0,1);
+		gRotate(270,0,0,1);
 		gPush();
 		{
 			gScale(0.6,0.6,1.5);
@@ -547,6 +549,21 @@ function render(timestamp) {
 		gPop();
 	}
 	gPop();
+	if(animFlag){
+		if(reverse == 0){
+			arm_angle1++;
+			arm_angle2--;
+			if(arm_angle1 == 90&&arm_angle2 == 0){
+				reverse = 1;
+			}
+		}else if(reverse == 1){
+			arm_angle1--;
+			arm_angle2++;
+			if(arm_angle1 == 0&&arm_angle2 == 90){
+				reverse = 0;
+			}
+		}
+	}
     if( animFlag )
         window.requestAnimFrame(render);
 }
@@ -558,6 +575,7 @@ function arm_joints(change_time){
 		gPush();
 		{
 			gTranslate(0,0,0.5);
+			gRotate(arm_angle1, 1, 0, 0);
 			gTranslate(0,0,-0.5);
 			gPush();
 			{
@@ -575,7 +593,7 @@ function arm_joints(change_time){
 			gPush();
 			{
 				gTranslate(0,0,-0.5);
-				gRotate(90,1,0,0);
+				gRotate(arm_angle2,1,0,0);
 				gTranslate(0,0,0.5);
 				gPush();
 				{
@@ -613,44 +631,51 @@ function arm_joints(change_time){
 		gTranslate(-1,0,0);
 		gRotate(45, 0,1,0);
 		gPush();
+		{
+			gTranslate(0,0,0.5);
+			gRotate(arm_angle2, 1, 0, 0);
+			gTranslate(0,0,-0.5);
+			gPush();
 			{
 				gTranslate(0,0,0.5);
 				gScale(0.125,0.125,0.125);
 				drawSphere();
 			}
 			gPop();
-		gPush();
-		{
-			gScale(0.25,0.25, 1);
-			drawCylinder();
-		}
-		gPop();
-		gPush();
-		{
-			gTranslate(0,0,-0.5);
-			gRotate(90,1,0,0);
-			gTranslate(0,0,0.5);
 			gPush();
 			{
-				gTranslate(0,0,-0.5);
-				gScale(0.125,0.125, 0.125);
-				drawSphere();
+				gScale(0.25,0.25, 1);
+				drawCylinder();
 			}
 			gPop();
 			gPush();
 			{
-				gTranslate(0,0,-1);
+				gTranslate(0,0,-0.5);
+				gRotate(arm_angle1,1,0,0);
+				gTranslate(0,0,0.5);
 				gPush();
 				{
-					gScale(0.25,0.25, 1);
-					drawCylinder();
+					gTranslate(0,0,-0.5);
+					gScale(0.125,0.125, 0.125);
+					drawSphere();
 				}
 				gPop();
 				gPush();
 				{
-					gTranslate(0,0,-0.75);
-					gScale(0.25,0.25,0.25);
-					drawSphere();
+					gTranslate(0,0,-1);
+					gPush();
+					{
+						gScale(0.25,0.25, 1);
+						drawCylinder();
+					}
+					gPop();
+					gPush();
+					{
+						gTranslate(0,0,-0.75);
+						gScale(0.25,0.25,0.25);
+						drawSphere();
+					}
+					gPop();
 				}
 				gPop();
 			}
@@ -660,6 +685,9 @@ function arm_joints(change_time){
 	}
 	gPop();
 }
+
+
+
 function leg_joints(change_time){
 	gPush();
 	{
