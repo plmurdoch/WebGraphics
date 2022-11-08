@@ -523,23 +523,18 @@ function render(timestamp) {
 		gPush();
 		{
 			gTranslate(1,0,0);
-			gRotate(-30, 0,1,0);
 			gPush();
 			{
 				gTranslate(0,0,0.5);
-				gScale(0.125,0.125,0.125);
-				drawSphere();
-			}
-			gPop();
-			gPush();
-			{
-				gScale(0.25,0.25, 1);
-				drawCylinder();
-			}
-			gPop();
-			gPush();
-			{
-				gTranslate(0,0,-1);
+				//gRotate(bezierRotation[2],1,0,0);
+				gTranslate(0,0,-0.5);
+				gPush();
+				{
+					gTranslate(0,0,0.5);
+					gScale(0.125,0.125,0.125);
+					drawSphere();
+				}
+				gPop();
 				gPush();
 				{
 					gScale(0.25,0.25, 1);
@@ -548,13 +543,39 @@ function render(timestamp) {
 				gPop();
 				gPush();
 				{
-					gTranslate(0,0,-0.75);
-					gScale(0.25,0.25,0.25);
-					drawSphere();
+					gTranslate(0,0,-0.5);
+					gRotate(90,1,0,0);
+					gTranslate(0,0,0.5);
+					gPush();
+					{
+						gTranslate(0,0,-0.5);
+						gScale(0.125,0.125, 0.125);
+						drawSphere();
+					}
+					gPop();
+					gPush();
+					{
+						gTranslate(0,0,-1);
+						gPush();
+						{
+							gScale(0.25,0.25, 1);
+							drawCylinder();
+						}
+						gPop();
+						gPush();
+						{
+							gTranslate(0,0,-0.75);
+							gScale(0.25,0.25,0.25);
+							drawSphere();
+						}
+						gPop();
+					}	
+					gPop();
 				}
 				gPop();
-			}	
+			}
 			gPop();
+			
 		}
 		gPop();
 		gPush();
