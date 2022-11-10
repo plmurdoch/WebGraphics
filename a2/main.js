@@ -50,8 +50,10 @@ var controller;
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
 var bezierRotation = [0,0,0];
-var arm_angle1 = 0;
-var arm_angle2 = 90;
+var arm_angle1 = -45;
+var arm_angle2 = 135;
+var arm_angle3 = 0;
+var arm_angle4 = 90;
 var reverse = 0;
 var useTextures = 1;
 
@@ -511,7 +513,7 @@ function render(timestamp) {
 		gRotate(270,0,0,1);
 		gPush();
 		{
-			gScale(0.6,0.6,1.5);
+			gScale(0.6,0.3,1.5);
 			drawCube();
 		}
 		gPop();
@@ -551,15 +553,19 @@ function render(timestamp) {
 	gPop();
 	if(animFlag){
 		if(reverse == 0){
-			arm_angle1++;
-			arm_angle2--;
+			arm_angle1 = arm_angle1+1.5;
+			arm_angle2 = arm_angle2-1.5;
+			arm_angle3 = arm_angle3+1.5;
+			arm_angle4 = arm_angle4-1.5;
 			if(arm_angle1 == 90&&arm_angle2 == 0){
 				reverse = 1;
 			}
 		}else if(reverse == 1){
-			arm_angle1--;
-			arm_angle2++;
-			if(arm_angle1 == 0&&arm_angle2 == 90){
+			arm_angle1= arm_angle1-1.5;
+			arm_angle2 = arm_angle2 +1.5;
+			arm_angle3 = arm_angle3- 1.5;
+			arm_angle4 = arm_angle4+1.5;
+			if(arm_angle1 == -45&&arm_angle2 == 135){
 				reverse = 0;
 			}
 		}
@@ -570,7 +576,7 @@ function render(timestamp) {
 function arm_joints(change_time){
 	gPush();
 	{
-		gTranslate(1,0,0);
+		gTranslate(1,0,1);
 		gRotate(-45, 0,1,0);
 		gPush();
 		{
@@ -628,12 +634,12 @@ function arm_joints(change_time){
 	gPop();
 	gPush();
 	{
-		gTranslate(-1,0,0);
+		gTranslate(-1,0,1);
 		gRotate(45, 0,1,0);
 		gPush();
 		{
 			gTranslate(0,0,0.5);
-			gRotate(arm_angle2, 1, 0, 0);
+			gRotate(arm_angle4, 1, 0, 0);
 			gTranslate(0,0,-0.5);
 			gPush();
 			{
@@ -651,7 +657,7 @@ function arm_joints(change_time){
 			gPush();
 			{
 				gTranslate(0,0,-0.5);
-				gRotate(arm_angle1,1,0,0);
+				gRotate(arm_angle3,1,0,0);
 				gTranslate(0,0,0.5);
 				gPush();
 				{
@@ -687,7 +693,7 @@ function arm_joints(change_time){
 }
 
 
-
+//Add Staggering to stance
 function leg_joints(change_time){
 	gPush();
 	{
