@@ -500,7 +500,7 @@ function render(timestamp) {
 			// TEXTURE_CUBE_MAP     - A cube-mapped texture.
 			// TEXTURE_3D           - A three-dimensional texture.
 			// TEXTURE_2D_ARRAY     - A two-dimensional array texture.
-		gl.bindTexture(gl.TEXTURE_2D, textureArray[0].textureWebGL);
+		gl.bindTexture(gl.TEXTURE_3D, textureArray[0].textureWebGL);
 		gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 	}
     else
@@ -529,7 +529,6 @@ function render(timestamp) {
 					drawCube();
 				}
 				gPop();
-				gRotate(-twist_angle,0,0,1);
 				gPush();
 				{
 					gTranslate(0,0,2);
@@ -537,6 +536,7 @@ function render(timestamp) {
 					drawSphere();
 				}
 				gPop();
+				gRotate(-twist_angle,0,0,1);
 				arm_joints(dt);
 				leg_joints(dt);
 			}
