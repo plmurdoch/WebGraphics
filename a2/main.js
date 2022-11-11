@@ -54,7 +54,13 @@ var arm_angle1 = -45;
 var arm_angle2 = 135;
 var arm_angle3 = 0;
 var arm_angle4 = 90;
+var bag_angle = 0;
+var rebound = 0;
 var reverse = 0;
+var side_1 = 0.0253125;
+var side_2 = -0.0253125;
+var twist_angle = -22.5;
+var twist_sig = 0;
 var useTextures = 1;
 
 //making a texture image procedurally
@@ -507,46 +513,43 @@ function render(timestamp) {
 	// You may be wondering where the texture coordinates are!
 	// We've modified the object.js to add in support for this attribute array!
 	gPush();
-	{	
-		gTranslate(-2, -2, 2);
-		bezierRotation[2] = bezierRotation[2] + 30*dt;
-		gRotate(270,0,0,1);
-		gPush();
-		{
-			gScale(0.6,0.3,1.5);
-			drawCube();
-		}
-		gPop();
-		gPush();
-		{
-			gTranslate(0,0,2);
-			gScale(0.5, 0.5, 0.5);
-			drawSphere();
-		}
-		gPop();
-		arm_joints(dt)
-		leg_joints(dt)
-	}
-	gPop();
-	gPush();
 	{
-		gTranslate(4,0,0);
+		bezierRotation[2] = bezierRotation[2] + 30*dt;
+		//gRotate(bezierRotation[2], 0,0,1);
 		gPush();
-		{
-			gScale(2,2,3);
-			drawCylinder();
+		{	
+			gTranslate(-2, 0, 2);
+			gRotate(270,0,0,1);
+			gPush();
+			{
+				gRotate(twist_angle, 0,0,1);
+				gPush();
+				{
+					gScale(0.6,0.3,1.5);
+					drawCube();
+				}
+				gPop();
+				gRotate(-twist_angle,0,0,1);
+				gPush();
+				{
+					gTranslate(0,0,2);
+					gScale(0.5, 0.5, 0.5);
+					drawSphere();
+				}
+				gPop();
+				arm_joints(dt);
+				leg_joints(dt);
+			}
+			gPop();
 		}
 		gPop();
 		gPush();
-		{
-			gTranslate(0,0,1.5);
-			drawSphere();
-		}
-		gPop();
-		gPush();
-		{
-			gTranslate(0,0,-1.5);
-			drawSphere();
+		{	
+			gPush();
+			{
+				Punching_bag();
+			}
+			gPop();
 		}
 		gPop();
 	}
@@ -569,6 +572,32 @@ function render(timestamp) {
 				reverse = 0;
 			}
 		}
+		if (rebound ==0){
+			bag_angle --;
+			if(bag_angle ==-45){
+				rebound = 1;
+			}
+		}else if (rebound == 1){
+			bag_angle++;
+			if(bag_angle == 0){
+				rebound = 0;
+			}
+		}
+		if(twist_sig == 0){
+			twist_angle = twist_angle +0.5;
+			side_1 = side_1 - 0.001125;
+			side_2 = side_2 +0.001125;
+			if(twist_angle == 22.5){
+				twist_sig = 1;
+			}
+		}else if(twist_sig ==1){
+			twist_angle = twist_angle -0.5;
+			side_1 = side_1 +0.001125;
+			side_2 = side_2 -0.001125;
+			if (twist_angle == -22.5){
+				twist_sig = 0;
+			}
+		}
 	}
     if( animFlag )
         window.requestAnimFrame(render);
@@ -580,7 +609,7 @@ function arm_joints(change_time){
 		gRotate(-45, 0,1,0);
 		gPush();
 		{
-			gTranslate(0,0,0.5);
+			gTranslate(0,side_1,0.5);
 			gRotate(arm_angle1, 1, 0, 0);
 			gTranslate(0,0,-0.5);
 			gPush();
@@ -638,7 +667,7 @@ function arm_joints(change_time){
 		gRotate(45, 0,1,0);
 		gPush();
 		{
-			gTranslate(0,0,0.5);
+			gTranslate(0,side_2,0.5);
 			gRotate(arm_angle4, 1, 0, 0);
 			gTranslate(0,0,-0.5);
 			gPush();
@@ -693,19 +722,14 @@ function arm_joints(change_time){
 }
 
 
-//Add Staggering to stance
 function leg_joints(change_time){
 	gPush();
 	{
 		gTranslate(0.25,0,-2.5);
 		gPush();
 		{
-			gScale(0.15,0.15, 1);
-			drawCube();
-		}
-		gPop();
-		gPush();
-		{
+			gTranslate(0,side_1,1);
+			gRotate(45, 1, 0, 0);
 			gTranslate(0,0,-1);
 			gPush();
 			{
@@ -715,9 +739,27 @@ function leg_joints(change_time){
 			gPop();
 			gPush();
 			{
-				gTranslate(0,0.2,-1);
-				gScale(0.20,0.45,0.1);
-				drawCube();
+				gTranslate(0,0,-2);
+				gPush();
+				{
+					gTranslate(0,0,1);
+					gRotate(-45, 1,0,0);
+					gTranslate(0,0,-1);
+					gPush();
+					{
+						gScale(0.15,0.15, 1);
+						drawCube();
+					}
+					gPop();
+					gPush();
+					{
+						gTranslate(0,0.2,-1);
+						gScale(0.20,0.45,0.1);
+						drawCube();
+					}
+					gPop();
+				}
+				gPop();
 			}
 			gPop();
 		}
@@ -729,26 +771,82 @@ function leg_joints(change_time){
 		gTranslate(-0.25,0,-2.5);
 		gPush();
 		{
-			gScale(0.15,0.15, 1);
-			drawCube();
-		}
-		gPop();
-		gPush();
-		{
+			gTranslate(0,side_2,1);
+			gRotate(-5, 1,0,0);
 			gTranslate(0,0,-1);
 			gPush();
 			{
 				gScale(0.15,0.15, 1);
 				drawCube();
-			}
+			}		
 			gPop();
 			gPush();
 			{
-				gTranslate(0,0.2,-1);
-				gScale(0.20,0.45,0.1);
-				drawCube();
+				gTranslate(0,0,-2);
+				gPush();
+				{
+					gTranslate(0,0,1);
+					gRotate(-40, 1, 0,0);
+					gTranslate(0,0,-1);
+					gPush();
+					{
+						gScale(0.15,0.15, 1);
+						drawCube();
+					}	
+					gPop();
+					gPush();
+					{
+						gTranslate(0,0.2,-1);
+						gPush();
+						{
+							gTranslate(0, 0, 0.2);
+							gRotate(40, 1,0,0);
+							gTranslate(0,0,-0.2);
+							gPush();
+							{
+								gScale(0.20,0.45,0.1);
+								drawCube();
+							}
+							gPop();
+						}
+						gPop();
+					}
+					gPop();
+				}
+				gPop();
 			}
 			gPop();
+		}
+		gPop();
+	}
+	gPop();
+}
+
+function Punching_bag(){
+	gTranslate(1.3,0,3);
+	gPush();
+	{
+		gTranslate(0,0,1.5);
+		gRotate(bag_angle, 0,1,0);
+		gTranslate(0,0,-1.5);
+		gPush();
+		{
+			gScale(2.5,2.5,3);
+			drawCylinder();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,1.5);
+			gScale(1.25,1.25,1);
+			drawSphere();
+		}
+		gPop();
+		gPush();
+		{
+			gTranslate(0,0,-1.5);
+			gScale(1.25, 1.25, 1);
+			drawSphere();
 		}
 		gPop();
 	}
