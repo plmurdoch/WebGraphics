@@ -30,7 +30,7 @@ var ambientColor, diffuseColor, specularColor;
 
 var modelMatrix, viewMatrix, modelViewMatrix, projectionMatrix, normalMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc, normalMatrixLoc;
-var eye;
+var eye =vec3(0,-10,10);
 var at = vec3(0.0, 0.0, 0.0);
 var up = vec3(0.0, 1.0, 0.0);
 
@@ -49,7 +49,6 @@ var controller;
 // These are used to store the current state of objects.
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
-var bezierRotation = [0,0,0];
 var arm_angle1 = -45;
 var arm_angle2 = 135;
 var arm_angle3 = 0;
@@ -160,7 +159,7 @@ function handleTextureLoaded(textureObj) {
     //Border: Width of image border. Adds padding.
     //Format: Similar to Internal format. But this responds to the texel data, or what kind of data the shader gets.
     //Type: Data type of the texel data
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureObj.image);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,gl.RGBA, gl.UNSIGNED_BYTE, textureObj.image);
 	
 	//Set texture parameters.
     //texParameteri(GLenum target, GLenum pname, GLint param);
@@ -275,17 +274,27 @@ function loadImageTexture(tex, image) {
 }
 
 // This just calls the appropriate texture loads for this example adn puts the textures in an array
+//https://opengameart.org/
 function initTexturesForExample() {
     textureArray.push({}) ;
     loadFileTexture(textureArray[textureArray.length-1],"sunset.bmp") ;
-    
+   
     textureArray.push({}) ;
     loadImageTexture(textureArray[textureArray.length-1],imageCheckerboard) ;
+	
+	textureArray.push({}) ;
+	loadFileTexture(textureArray[textureArray.length-1],"floor.png") ;
+	
+	textureArray.push({}) ;
+	loadFileTexture(textureArray[textureArray.length-1],"Stone.jpg") ;
+	
+	textureArray.push({}) ;
+	loadFileTexture(textureArray[textureArray.length-1],"Punching_bag.png") ;
 }
 
 // Changes which texture is active in the array of texture examples (see initTexturesForExample)
 function toggleTextures() {
-    useTextures = (useTextures + 1) % 2
+    useTextures = (useTextures + 1) % 2;
 	gl.uniform1i(gl.getUniformLocation(program, "useTextures"), useTextures);
 }
 
@@ -317,12 +326,6 @@ window.onload = function init() {
     Cone.init(20,program);
     Sphere.init(36,program);
 	
-	// We're going to initialize a new shape that will sort of look like a terrain for fun
-	p1 = [[vec3(-3,-3,0), vec3(-1,-3,0), vec3(1,-3,0), vec3(3,-3,0)],
-		 [vec3(-3,-1,0), vec3(-1,-1,3), vec3(1,-1,3), vec3(3,-1,0)],
-		 [vec3(-3,1,0), vec3(-1,1,3), vec3(1,1,3), vec3(3,1,0)],
-		 [vec3(-3,3,0), vec3(-1,3,0), vec3(1,3,0), vec3(3,3,0)]] ;
-	gBezierPatch1 = new BezierPatch3(2.0,p1,program) ;
 
     // Matrix uniforms
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
@@ -458,7 +461,6 @@ function render(timestamp) {
     
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    eye = vec3(0,-10,10);
     MS = []; // Initialize modeling matrix stack
 	
 	// initialize the modeling matrix to identity
@@ -491,33 +493,52 @@ function render(timestamp) {
 	// We need to bind our textures, ensure the right one is active before we draw
 	//Activate a specified "texture unit".
     //Texture units are of form gl.TEXTUREi | where i is an integer.
-	gl.activeTexture(gl.TEXTURE0);
-	if (useTextures % 2 == 1) 
-	{
 		//Binds a texture to a target. Target is then used in future calls.
 		//Targets:
 			// TEXTURE_2D           - A two-dimensional texture.
 			// TEXTURE_CUBE_MAP     - A cube-mapped texture.
 			// TEXTURE_3D           - A three-dimensional texture.
 			// TEXTURE_2D_ARRAY     - A two-dimensional array texture.
-		gl.bindTexture(gl.TEXTURE_3D, textureArray[0].textureWebGL);
-		gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
-	}
-    else
-	{
-		gl.bindTexture(gl.TEXTURE_2D, textureArray[1].textureWebGL);
-		gl.uniform1i(gl.getUniformLocation(program, "texture2"), 0);
-	}
+	//gl.activeTexture(gl,TEXTURE0);
+	//gl.bindTexture(gl.TEXTURE_2D, textureArray[useTextures%2].textureWebGL);
+	//gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 	
 	// Now let's draw a shape animated!
 	// You may be wondering where the texture coordinates are!
 	// We've modified the object.js to add in support for this attribute array!
+	if (animFlag){
+		temp = eye[0];
+		eye[0] = eye[0]*Math.cos(dt)+eye[1]*Math.sin(dt);
+		eye[1] = -temp*Math.sin(dt)+eye[1]*Math.cos(dt);
+		
+	}
 	gPush();
 	{
-		bezierRotation[2] = bezierRotation[2] + 30*dt;
-		//gRotate(bezierRotation[2], 0,0,1);
+		gPush();
+		{
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, textureArray[2].textureWebGL);
+			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
+			gPush();
+			{
+				gTranslate(0,0,-3.5);
+				gScale(13,13, 0.3);
+				drawCube();
+			}
+			gPop();
+			gPush();
+			{
+				ground_rocks();
+			}
+			gPop();
+			
+		}
+		gPop();
 		gPush();
 		{	
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, textureArray[3].textureWebGL);
+			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 			gTranslate(-2, 0, 2);
 			gRotate(270,0,0,1);
 			gPush();
@@ -547,6 +568,9 @@ function render(timestamp) {
 		{	
 			gPush();
 			{
+				gl.activeTexture(gl.TEXTURE0);
+				gl.bindTexture(gl.TEXTURE_2D, textureArray[4].textureWebGL);
+				gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 				Punching_bag();
 			}
 			gPop();
@@ -601,6 +625,19 @@ function render(timestamp) {
 	}
     if( animFlag )
         window.requestAnimFrame(render);
+}
+function ground_rocks(){
+	gTranslate(0,1.25,-3.25);
+	drawSphere();
+	gTranslate(2,2,0);
+	drawSphere();
+	gTranslate(-8,2,0);
+	drawSphere();
+	gTranslate(0,-4,0);
+	drawSphere();
+	gTranslate(5,-4,0);
+	drawSphere();
+	
 }
 function arm_joints(change_time){
 	gPush();
