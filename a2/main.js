@@ -45,7 +45,8 @@ var prevTime = 0.0;
 var resetTimerFlag = true;
 var animFlag = false;
 var controller;
-
+var fps;
+var two_sec = 120;
 // These are used to store the current state of objects.
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
@@ -277,7 +278,7 @@ function loadImageTexture(tex, image) {
 //https://opengameart.org/
 function initTexturesForExample() {
     textureArray.push({}) ;
-    loadFileTexture(textureArray[textureArray.length-1],"sunset.bmp") ;
+    loadFileTexture(textureArray[textureArray.length-1],"lizard_skin.png") ;
    
     textureArray.push({}) ;
     loadImageTexture(textureArray[textureArray.length-1],imageCheckerboard) ;
@@ -290,6 +291,9 @@ function initTexturesForExample() {
 	
 	textureArray.push({}) ;
 	loadFileTexture(textureArray[textureArray.length-1],"Punching_bag.png") ;
+	
+	textureArray.push({}) ;
+	loadFileTexture(textureArray[textureArray.length-1],"skin.jpg") ;
 }
 
 // Changes which texture is active in the array of texture examples (see initTexturesForExample)
@@ -356,21 +360,16 @@ window.onload = function init() {
         }
     };
     
-    document.getElementById("textureToggleButton").onclick = function() {
-        toggleTextures() ;
-        window.requestAnimFrame(render);
-    };
 
     var controller = new CameraController(canvas);
     controller.onchange = function(xRot,yRot) {
         RX = xRot ;
         RY = yRot ;
-        window.requestAnimFrame(render); };
+		};
 	
 	
 	// Helper function just for this example to load the set of textures
     initTexturesForExample() ;
-
     waitForTextures(textureArray);
 }
 
@@ -499,13 +498,21 @@ function render(timestamp) {
 			// TEXTURE_CUBE_MAP     - A cube-mapped texture.
 			// TEXTURE_3D           - A three-dimensional texture.
 			// TEXTURE_2D_ARRAY     - A two-dimensional array texture.
-	//gl.activeTexture(gl,TEXTURE0);
-	//gl.bindTexture(gl.TEXTURE_2D, textureArray[useTextures%2].textureWebGL);
-	//gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 	
 	// Now let's draw a shape animated!
 	// You may be wondering where the texture coordinates are!
 	// We've modified the object.js to add in support for this attribute array!
+	if (animFlag){
+		if (two_sec == 0){
+			const fpsElem = document.querySelector("#fps");
+			fps = 1/dt;
+			fpsElem.textContent = fps.toFixed(1);
+			two_sec = 120;
+		}
+		else{
+			two_sec -= 1;
+		}
+	}
 	if (animFlag){
 		temp = eye[0];
 		eye[0] = eye[0]*Math.cos(dt)+eye[1]*Math.sin(dt);
@@ -528,6 +535,7 @@ function render(timestamp) {
 			gPop();
 			gPush();
 			{
+				
 				ground_rocks();
 			}
 			gPop();
@@ -537,7 +545,7 @@ function render(timestamp) {
 		gPush();
 		{	
 			gl.activeTexture(gl.TEXTURE0);
-			gl.bindTexture(gl.TEXTURE_2D, textureArray[3].textureWebGL);
+			gl.bindTexture(gl.TEXTURE_2D, textureArray[5].textureWebGL);
 			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 			gTranslate(-2, 0, 2);
 			gRotate(270,0,0,1);
@@ -566,12 +574,21 @@ function render(timestamp) {
 		gPop();
 		gPush();
 		{	
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, textureArray[0].textureWebGL);
+			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
+			tail();
 			gPush();
 			{
 				gl.activeTexture(gl.TEXTURE0);
 				gl.bindTexture(gl.TEXTURE_2D, textureArray[4].textureWebGL);
 				gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 				Punching_bag();
+			}
+			gPop();
+			gPush();
+			{
+				
 			}
 			gPop();
 		}
@@ -886,6 +903,75 @@ function Punching_bag(){
 			drawSphere();
 		}
 		gPop();
+	}
+	gPop();
+}
+
+function tail(){
+	gPush();
+	{
+		gTranslate(-2.5,0,1);
+		gRotate(270, 0,1,0);
+		gTranslate(0,0,-0.5);
+		gRotate(-bag_angle, 0,1,0);
+		gPush();
+		{
+			gScale(0.25,0.25,0.25);
+			drawSphere();
+		}
+		gPop();
+		gTranslate(0,0,0.5);
+		gPush();
+		{
+			gScale(0.25,0.25,1);
+			drawCylinder();
+			gTranslate(0,0,0.5);
+			gRotate(bag_angle, 0,1,0);
+			gPush();
+			{
+				gScale(0.5,0.5,0.5);
+				drawSphere();
+			}
+			gPop();
+			gTranslate(0,0,-0.5);
+			gPush();
+			{
+				gTranslate(0,0,1);
+				drawCylinder();
+				gTranslate(0,0,0.5);
+				gRotate(bag_angle, 0,1,0);
+				gPush();
+				{
+					gScale(0.5,0.5,0.5);
+					drawSphere();
+				}
+				gPop();
+				gTranslate(0,0,-0.5);
+				gPush();
+				{
+					gTranslate(0,0,1);
+					drawCylinder();
+					gTranslate(0,0,0.5);
+					gRotate(bag_angle, 0,1,0);
+					gPush();
+					{
+						gScale(0.5,0.5,0.5);
+						drawSphere();
+					}
+					gPop();
+					gTranslate(0,0,-0.5);
+					gPush();
+					{
+						gTranslate(0,0,1);
+						drawCylinder();
+					}
+					gPop();
+				}
+				gPop();
+			}
+			gPop();
+		}
+		gPop();	
 	}
 	gPop();
 }
