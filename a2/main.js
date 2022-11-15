@@ -502,6 +502,8 @@ function render(timestamp) {
 	// Now let's draw a shape animated!
 	// You may be wondering where the texture coordinates are!
 	// We've modified the object.js to add in support for this attribute array!
+	
+	//Function to print the framerate every 2 seconds (120 frames).
 	if (animFlag){
 		if (two_sec == 0){
 			const fpsElem = document.querySelector("#fps");
@@ -513,29 +515,33 @@ function render(timestamp) {
 			two_sec -= 1;
 		}
 	}
+	//Adjusting eye, creating a 360 rotation around the scene.
 	if (animFlag){
 		temp = eye[0];
 		eye[0] = eye[0]*Math.cos(dt)+eye[1]*Math.sin(dt);
 		eye[1] = -temp*Math.sin(dt)+eye[1]*Math.cos(dt);
 		
 	}
+	//Begin modeling Figures.
 	gPush();
 	{
 		gPush();
 		{
+			//Activate floor texture.
 			gl.activeTexture(gl.TEXTURE0);
 			gl.bindTexture(gl.TEXTURE_2D, textureArray[2].textureWebGL);
 			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 			gPush();
 			{
+				//Create floor cube.
 				gTranslate(0,0,-3.5);
 				gScale(13,13, 0.3);
 				drawCube();
 			}
 			gPop();
 			gPush();
-			{
-				
+			{	
+				//Model some ground spheres do add dimension to the floor.
 				ground_rocks();
 			}
 			gPop();
@@ -544,6 +550,8 @@ function render(timestamp) {
 		gPop();
 		gPush();
 		{	
+			//Begin modeling Body
+			//Activate human skin-like texture.
 			gl.activeTexture(gl.TEXTURE0);
 			gl.bindTexture(gl.TEXTURE_2D, textureArray[5].textureWebGL);
 			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
@@ -551,22 +559,28 @@ function render(timestamp) {
 			gRotate(270,0,0,1);
 			gPush();
 			{
+				//Body Rotation which changes over time.
 				gRotate(twist_angle, 0,0,1);
 				gPush();
 				{
+					//Body
 					gScale(0.6,0.3,1.5);
 					drawCube();
 				}
 				gPop();
 				gPush();
 				{
+					//Head
 					gTranslate(0,0,2);
 					gScale(0.5, 0.5, 0.5);
 					drawSphere();
 				}
 				gPop();
+				//undo rotation
 				gRotate(-twist_angle,0,0,1);
+				//Arm joints
 				arm_joints(dt);
+				//Leg joints
 				leg_joints(dt);
 			}
 			gPop();
@@ -574,15 +588,19 @@ function render(timestamp) {
 		gPop();
 		gPush();
 		{	
+			//Activate tail-like texture
 			gl.activeTexture(gl.TEXTURE0);
-			gl.bindTexture(gl.TEXTURE_2D, textureArray[0].textureWebGL);
+			gl.bindTexture(gl.TEXTURE_2D, textureArray[5].textureWebGL);
 			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
+			//Tail.
 			tail();
 			gPush();
 			{
+				//Activate Texture for punching bag
 				gl.activeTexture(gl.TEXTURE0);
 				gl.bindTexture(gl.TEXTURE_2D, textureArray[4].textureWebGL);
 				gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
+				//Create punching bag.
 				Punching_bag();
 			}
 			gPop();
@@ -595,7 +613,9 @@ function render(timestamp) {
 		gPop();
 	}
 	gPop();
+	//Loops for creating joint movement in animated models.
 	if(animFlag){
+		//the following controls arms.
 		if(reverse == 0){
 			arm_angle1 = arm_angle1+1.5;
 			arm_angle2 = arm_angle2-1.5;
@@ -613,6 +633,7 @@ function render(timestamp) {
 				reverse = 0;
 			}
 		}
+		//The following controls the bag movement.
 		if (rebound ==0){
 			bag_angle --;
 			if(bag_angle ==-45){
@@ -624,6 +645,7 @@ function render(timestamp) {
 				rebound = 0;
 			}
 		}
+		//The following controls the body movement and rotations.
 		if(twist_sig == 0){
 			twist_angle = twist_angle +0.5;
 			side_1 = side_1 - 0.001125;
@@ -643,6 +665,7 @@ function render(timestamp) {
     if( animFlag )
         window.requestAnimFrame(render);
 }
+//All ground spheres.
 function ground_rocks(){
 	gTranslate(0,1.25,-3.25);
 	drawSphere();
@@ -656,6 +679,7 @@ function ground_rocks(){
 	drawSphere();
 	
 }
+//Hierarchical arm joints.
 function arm_joints(change_time){
 	gPush();
 	{
@@ -775,7 +799,7 @@ function arm_joints(change_time){
 	gPop();
 }
 
-
+//Hierarchical leg joints
 function leg_joints(change_time){
 	gPush();
 	{
@@ -876,6 +900,7 @@ function leg_joints(change_time){
 	gPop();
 }
 
+//Hierarchical punching bag.
 function Punching_bag(){
 	gTranslate(1.3,0,3);
 	gPush();
@@ -907,6 +932,7 @@ function Punching_bag(){
 	gPop();
 }
 
+//Hierarchical tail.
 function tail(){
 	gPush();
 	{

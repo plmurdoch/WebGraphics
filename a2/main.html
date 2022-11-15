@@ -29,8 +29,7 @@ main()
 
     vec3 L = vec3(normalize(lightPosition.xyz-pos)) ;
     vec3 V = normalize(-pos.xyz) ;
-    vec3 R = reflect(-L, N) ;
-
+	vec3 H =normalize(L+V);
 
     // Compute terms in the illumination equation
     vec4 ambient = ambientProduct;
@@ -42,7 +41,7 @@ main()
     vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
    
     diffuse = Kd*diffuseProduct;
-    float Ks = pow( max(dot(R, V), 0.0), shininess );
+    float Ks = pow( max(dot(H, N), 0.0), shininess );
     specular = Ks * specularProduct;
     
     if( dot(L, N) < 0.0 ) {
