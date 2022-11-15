@@ -7,6 +7,8 @@ At least two textures mapped:
 	Ground texture Lines 531-534
 	Punching Bag texture Lines: 600-602
 	Texture for Monkey model Lines: 555-557
+	Note: All textures within A2 are provided by www.opengameart.org and are open domain products
+	without any copyrights.
 Camera fly around performed upon animation flag Lines: 519-522
 Connection to real time: Camera fly around synced to real time and movement of the models synced to 
 animation flag allowing for movement to emulate real time speed

@@ -593,7 +593,9 @@ function render(timestamp) {
 			gl.bindTexture(gl.TEXTURE_2D, textureArray[5].textureWebGL);
 			gl.uniform1i(gl.getUniformLocation(program, "texture1"), 0);
 			//Tail.
+			gRotate(twist_angle/5, 0,0,1);
 			tail();
+			gRotate(-twist_angle/5,0,0,1);
 			gPush();
 			{
 				//Activate Texture for punching bag
