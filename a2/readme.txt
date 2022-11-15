@@ -8,7 +8,8 @@ At least two textures mapped:
 	Punching Bag texture Lines: 600-602
 	Texture for Monkey model Lines: 555-557
 	Note: All textures within A2 are provided by www.opengameart.org and are open domain products
-	without any copyrights.
+	without any copyrights. Furthermore, note that all textures are incorporated through a simple server
+	Run through python commands on the powershell.
 Camera fly around performed upon animation flag Lines: 519-522
 Connection to real time: Camera fly around synced to real time and movement of the models synced to 
 animation flag allowing for movement to emulate real time speed
