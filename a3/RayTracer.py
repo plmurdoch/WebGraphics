@@ -60,10 +60,7 @@ def scene_builder(info, s_list, l_list):
     output = open(info.output,"wb")
     initial = "P6\n"+str(info.resolution[0])+" "+str(info.resolution[1])+" 255\n"
     output.write(initial.encode())
-    background = numpy.zeros((info.resolution[0]*info.resolution[1],3))
-    for x in range(info.resolution[0]):
-        for y in range(info.resolution[1]):
-            background[x][y] = [255,255,255]
+    background = array.array('B',[info.back[0]*255,info.back[1]*255,info.back[2]*255]*info.resolution[0]*info.resolution[1])
     background.tofile(output)
     for x in range(info.resolution[0]):
         for y in range(info.resolution[1]):
