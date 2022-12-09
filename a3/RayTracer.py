@@ -2,6 +2,7 @@ import sys
 import re
 import queue
 import numpy 
+import array
 
 class image_info:
     def __init__(self):
@@ -59,15 +60,19 @@ def scene_builder(info, s_list, l_list):
     output = open(info.output,"wb")
     initial = "P6\n"+str(info.resolution[0])+" "+str(info.resolution[1])+" 255\n"
     output.write(initial.encode())
-    for x in info.resolution[0]:
-        for y in info.resolution[1]:
-            draw(x, y, info, s_list, l_list)
+    background = numpy.zeros((info.resolution[0]*info.resolution[1],3))
+    for x in range(info.resolution[0]):
+        for y in range(info.resolution[1]):
+            background[x][y] = [255,255,255]
+    background.tofile(output)
+    for x in range(info.resolution[0]):
+        for y in range(info.resolution[1]):
+            draw(x, y, info, s_list, l_list, output)
     output.close()
 
 
-def draw(x,y, info, s, l):
-    
-    
+def draw(x,y, info, s, l, out):
+    return
     
     
     
