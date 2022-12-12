@@ -4,6 +4,7 @@ import queue
 import numpy 
 import array
 import matplotlib.pyplot
+
 class image_info:
     def __init__(self):
         self.near = 0
@@ -49,17 +50,16 @@ def initializer(input_file):
 def scene_builder(info, s_list, l_list):
     scrn = (info.left, info.right, info.top, info.bottom)
     cam = numpy.array([0,0,1])
-    output = open(info.output,"wb")
-    initial = "P3\n"+str(info.resolution[0])+" "+str(info.resolution[1])+"\n255\n"
+    #output = open(info.output,"wb")
+    #initial = "P6\n"+str(info.resolution[0])+" "+str(info.resolution[1])+"\n255\n"
+   # output.write(initial.encode())
+   # output.write(b'\n')
     background = numpy.zeros((info.resolution[1],info.resolution[0],3))
     eye_ray(background, cam, scrn, info, s_list, l_list)
-    output.write(initial.encode())
-    output.write(b'\n')
-    #background.tofile(output, " ")
-    helper = re.search("(.+?).ppm",info.output)
-    test_name = helper.group(1)+".png"
-    matplotlib.pyplot.imsave(test_name, background)
-    output.close()
+    to_file = background.tolist()
+    #background.tofile(output)
+    matplotlib.pyplot.imsave(info.output, background)
+    #output.close()
 
 
 def eye_ray(background, cam, scrn, info, s, l):
@@ -70,11 +70,12 @@ def eye_ray(background, cam, scrn, info, s, l):
     while count_y > scrn[3]: 
         count_x = scrn[0]
         true_x = 0
+        counter = 0 
         while count_x < scrn[1]:
             pix_loc = numpy.array([count_x,count_y,0])
             direction = ((pix_loc - cam)/numpy.linalg.norm((pix_loc - cam)))
             color = rayTrace(cam, s, l, direction, info, 0)
-            background[true_y,true_x] = numpy.array([color[0],color[1],color[2]])
+            background[true_y, true_x] = numpy.array([color[0],color[1], color[2]])
             count_x -= increment_x
             true_x += 1
             if true_x == info.resolution[0]:
@@ -94,38 +95,29 @@ def rayTrace(cam, objects, lighting, direction, info, bounce):
     for s_intersect in objects:
         is_hit = hit_or_miss(s_intersect.center, s_intersect.scale,direction, cam)
         if is_hit:
-            if closest_intersect[1] == 0.0:
-                temp = list(closest_intersect)
-                temp[0] = s_intersect.name
-                temp[1] = is_hit
-                closest_intersect = tuple(temp)
-            elif closest_intersect[1] > is_hit:
-                temp = list(closest_intersect)
-                temp[0] = s_intersect.name
-                temp[1] = is_hit
-                closest_intersect = tuple(temp)
+            if is_hit < 1:
+                continue
+            else:
+                if closest_intersect[1] == 0.0:
+                    temp = list(closest_intersect)
+                    temp[0] = s_intersect.name
+                    temp[1] = is_hit
+                    closest_intersect = tuple(temp)
+                elif closest_intersect[1] > is_hit:
+                    temp = list(closest_intersect)
+                    temp[0] = s_intersect.name
+                    temp[1] = is_hit
+                    closest_intersect = tuple(temp)
     if closest_intersect[0] != "":
         for search in objects:
             if search.name == closest_intersect[0]:
-                intersection = (cam - search.center) +(direction*closest_intersect[1])
+                intersection = (cam +(direction*closest_intersect[1]))
                 c_local = numpy.array([0.0,0.0,0.0])
                 reflect_c = numpy.array([0.0,0.0,0.0])
                 reflect_list = []
                 for li in lighting:
-                    temp = calc_shadow(li, intersection, objects, search, direction, reflect_list)
+                    temp = calc_shadow(li, intersection, objects, search, direction, reflect_list, closest_intersect[1], cam)
                     c_local = temp +c_local
-                    if c_local[0] > 1:
-                        c_local[0] = 1.0
-                    if c_local[1] > 1:
-                        c_local[1] = 1.0
-                    if c_local[2] >1:
-                        c_local[2] = 1.0
-                    if c_local[0] < 0:
-                        c_local[0] = 0.0
-                    if c_local[1] < 0:
-                        c_local[1] = 0.0
-                    if c_local[2] < 0:
-                        c_local[2] = 0.0
                 for i in reflect_list:
                     bouncing = 0
                     #reflect_c = rayTrace(intersection, objects, lighting, i, info, bouncing)
@@ -133,45 +125,31 @@ def rayTrace(cam, objects, lighting, direction, info, bounce):
                 color_g = search.KA*info.ambient[1]*search.color[1] + c_local[1]+search.KR*reflect_c[1]
                 color_b = search.KA*info.ambient[2]*search.color[2] + c_local[2]+search.KR*reflect_c[2]
                 color = numpy.array([color_r,color_g,color_b])
-                if color[0] > 1:
-                    color[0] = 1.0
-                if color[1] > 1:
-                    color[1] = 1.0
-                if color[2] >1:
-                   color[2] = 1.0
-                if color[0] < 0:
-                    color[0] = 0.0
-                if color[1] < 0:
-                    color[1] = 0.0
-                if color[2] < 0:
-                   color[2] = 0.0
-                return color
+                return numpy.clip(color, 0.0,1.0, out=color)
     else:
         return info.back
 
   
-def calc_shadow(li, intersection, objects,sname, direction, reflect_list):
+def calc_shadow(li, intersection, objects,sname, direction, reflect_list, t, cam_loc):
+    direct = ((intersection- sname.center)/numpy.linalg.norm((intersection -sname.center)))
+    L = (li.position - intersection)/numpy.linalg.norm(li.position-intersection)
     for c in objects:
-        hit = hit_or_miss(c.center, c.scale, intersection, li.position)
-        if not hit:
+        if c.name != sname.name:
+            hit = block_or_not(c.center, c.scale, L, li.position)
+            if not hit:
+                continue
+            if hit:
+                return numpy.array([0.0,0.0,0.0])
+        else:
             continue
-        if hit and c.name != sname.name:
-            return numpy.array([0.0,0.0,0.0])
-    calc = numpy.array([pow(intersection[0]/sname.scale[0],2),
-                        pow(intersection[1]/sname.scale[1],2),
-                        pow(intersection[2]/sname.scale[2],2)])
-    Normal = intersection + calc/numpy.linalg.norm(intersection +calc)
-    L = (li.position + intersection)/numpy.linalg.norm(li.position +intersection)
-    R = reflection(Normal, L)
-    reflect_list.append(R)
-    V = (intersection - direction)/numpy.linalg.norm(intersection - direction)
-    local_r = sname.KD*li.color[0]*(numpy.dot(Normal,L))*sname.color[0]+sname.KS*li.color[0]*(pow(numpy.dot(R,V),sname.n))
-    local_g = sname.KD*li.color[1]*(numpy.dot(Normal,L))*sname.color[1]+sname.KS*li.color[1]*(pow(numpy.dot(R,V),sname.n))
-    local_b = sname.KD*li.color[2]*(numpy.dot(Normal,L))*sname.color[2]+sname.KS*li.color[2]*(pow(numpy.dot(R,V),sname.n))
+    calc_2 = (2*(numpy.dot(L,direct)*direct)) 
+    R = (calc_2 -L)/numpy.linalg.norm(calc_2 - L)
+    V = (cam_loc-intersection)/numpy.linalg.norm(cam_loc -intersection)
+    local_r = sname.KD*li.color[0]*(numpy.dot(L,direct))*sname.color[0]+sname.KS*li.color[0]*(pow(numpy.dot(R,V),sname.n))
+    local_g = sname.KD*li.color[1]*(numpy.dot(L,direct))*sname.color[1]+sname.KS*li.color[1]*(pow(numpy.dot(R,V),sname.n))
+    local_b = sname.KD*li.color[2]*(numpy.dot(L,direct))*sname.color[2]+sname.KS*li.color[2]*(pow(numpy.dot(V,R),sname.n))
     return numpy.array([local_r,local_g,local_b])
 
-def reflection(normal, source):
-    return 2*numpy.dot(normal, source)*normal - source
 
 def hit_or_miss(center, scale, direct, cam_loc):
     trans_2 = cam_loc -center
@@ -197,6 +175,25 @@ def hit_or_miss(center, scale, direct, cam_loc):
     else:
         return       
 
+def block_or_not(center, scale, direct, cam_loc):
+    trans_2 = cam_loc 
+    calc_x_a = pow(direct[0]/scale[0],2)
+    calc_y_a = pow(direct[1]/scale[1],2)
+    calc_z_a = pow(direct[2]/scale[2],2)
+    calc_x_b = (2*trans_2[0]*direct[0])/pow(scale[0],2)
+    calc_y_b = (2*trans_2[1]*direct[1])/pow(scale[1],2)
+    calc_z_b = (2*trans_2[2]*direct[2])/pow(scale[2],2)
+    calc_x_c = pow(trans_2[0]/scale[0],2)
+    calc_y_c = pow(trans_2[1]/scale[1],2)
+    calc_z_c = pow(trans_2[2]/scale[2],2)
+    A = calc_x_a +calc_y_a +calc_z_a
+    B = calc_x_b +calc_y_b +calc_z_b
+    C = calc_x_c +calc_y_c +calc_z_c -1
+    hit = pow(B,2) - 4*A*C
+    if hit > 0:
+        return 1
+    else:
+        return  
         
 def parse_lines(lines, information, spheres, lights):
     buf = []
@@ -230,7 +227,7 @@ def parse_lines(lines, information, spheres, lights):
     else:
         if re.search("SPHERE", lines):
             spheres.append(initialize_sphere(lines))
-        else:
+        elif re.search("LIGHT",lines):
             lights.append(initialize_light(lines))
 
 
